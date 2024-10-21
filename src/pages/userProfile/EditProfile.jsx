@@ -61,7 +61,7 @@ e.preventDefault()
             <div className="col-md-3">
               <UserProfileLeft />
             </div>
-            <div className="col-md-6">
+            <div className="col">
               <section>
                 <div className="card">
                   <div className="card-body ">
@@ -214,9 +214,9 @@ e.preventDefault()
                 </div>
               </section>
             </div>
-            <div className="col-md-3 ">
+{/*             <div className="col-md-3 ">
               <UserProfileRight />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
