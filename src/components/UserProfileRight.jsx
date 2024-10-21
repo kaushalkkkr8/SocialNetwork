@@ -16,7 +16,7 @@ const UserProfileRight = ({ userDetail }) => {
   const userData = !userDetail ? userDetail : data.find((user) => user.logIn === true);
   const followingUser = userData?.following.map((user) => user.userName);
 
-  const followings = data.filter((user) => followingUser.includes(user.userName));
+  const followings = data?.filter((user) => followingUser?.includes(user.userName));
 
   const followingHandeler = (profileId) => {
     const profileForFollowing = data?.find((user) => user._id === profileId);
