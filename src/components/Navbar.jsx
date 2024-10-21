@@ -41,7 +41,7 @@ const Navbar = () => {
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div className="collapse navbar-collapse container" id="navbarNav">
           {userData && (
             <div className=" ms-auto  d-flex" style={{ width: "50px", height: "50px", position: "relative" }}>
               <img className=" rounded-circle " src={userData.image?userData.image:avtar} alt="avatar3" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
