@@ -23,22 +23,21 @@ const Navbar = () => {
   return (
     <nav className="navbar  container-fluid navbar-expand-lg bg-body-tertiary">
       <div className="container ">
-        <a className="navbar-brand" href="/mainPage">
+        <a className="navbar-brand" href="/">
           Navbar
         </a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          {userData && (
-            <div className=" ms-auto  d-flex" style={{ width: "50px", height: "50px", position: "relative" }}>
-              <img className=" rounded-circle " src={userData.image ? userData.image : avtar} alt="avatar3" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
 
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="nav ms-auto">
+            <li className="nav-item">
               <button className=" btn btn-primary " aria-current="page" href="#" onClick={handleLogout}>
                 Log Out
               </button>
-            </div>
-          )}
+            </li>
+          </ul>
         </div>
       </div>
       <ToastContainer />
