@@ -11,40 +11,13 @@ const UserProfileRight = ({ userDetail }) => {
     female: "https://gallico.shop/wp-content/plugins/konte-addons/assets/images/person.jpg",
   };
 
-  const fetchProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.warn("No token found. Please log in.");
-        return;
-      }
+  const { user } = useSelector((state) => state);
+  const data = user?.profile;
+  const userData = !userDetail ? userDetail : data.find((user) => user.logIn === true);
+  const followingUser = userData?.following.map((user) => user.userName);
 
-      const response = await fetch("https://major-project2-backend.vercel.app/profile", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+  const followings = data.filter((user) => followingUser.includes(user.userName));
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch profile data.");
-      }
-
-      const result = await response.json();
-
-      if (result.success) {
-        setLogInDetail(result.profile);
-      }
-    } catch (err) {
-      handleError(err);
-    }
-  };
-
-  const { profile } = useSelector((state) => state.user);
-  const allUser = profile || [];
-  const logInProfileData = allUser.find((userss) => userss._id === logInDetail?._id);
-  const userData = userDetail ? userDetail : logInProfileData;
-  const followings = allUser?.filter((user) => userData?.following.some((follow) => follow.user === user._id));
-  const followers = allUser?.filter((user) => userData?.follower.some((follow) => follow.user === user._id));
   const followingHandeler = (profileId) => {
     const profileForFollowing = allUser?.find((user) => user._id === profileId);
 

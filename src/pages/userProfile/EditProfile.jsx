@@ -118,7 +118,7 @@ const EditProfile = () => {
               
             <UserProfileLeft userDetail={userData} />
             </div>
-            <div className="col-md-6">
+            <div className="col">
               <section>
                 <div className="card">
                   <div className="card-body ">
@@ -273,9 +273,9 @@ const EditProfile = () => {
                 </div>
               </section>
             </div>
-            <div className="col-md-3 ">
+{/*             <div className="col-md-3 ">
               <UserProfileRight />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
