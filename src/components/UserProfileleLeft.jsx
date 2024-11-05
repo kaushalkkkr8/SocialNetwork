@@ -1,24 +1,66 @@
 import { useDispatch, useSelector } from "react-redux";
-import { fetchLogInUser } from "../features/userSlice";
-import { useEffect } from "react";
+import { fetchUser } from "../features/userSlice";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { handleError } from "../utilities/utils";
 
 const UserProfileLeft = ({ userDetail }) => {
   const dispatch = useDispatch();
-  const { user, status, error } = useSelector((state) => state);
-  const data = user?.profile || [];
-  const userData = userDetail ? userDetail : data.find((user) => user.logIn === true);
+  const [logInDetail, setLogInDetail] = useState("");
+ 
 
-  useEffect(() => {
-    // Fetch user data only if it hasn't been fetched yet or if userData is not available
-    if (!data) {
-      dispatch(fetchLogInUser());
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.warn("No token found. Please log in.");
+        return;
+      }
+
+      const response = await fetch("https://major-project2-backend.vercel.app/profile", {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch profile data.");
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        setLogInDetail(result.profile);
+      }
+    } catch (err) {
+      handleError(err);
     }
-  }, [dispatch, data]);
+  };
+
+  const { profile,status,error } = useSelector((state) => state.user);
+  const allUser = profile || [];
+  const logInProfileData = allUser.find((userss) => userss._id === logInDetail?._id);
+  const userData = userDetail ? userDetail : logInProfileData;
+
+console.log("apple1");
+
+
+useEffect(() => {
+  console.log("Fetching user data");
+  dispatch(fetchUser());
+}, [logInDetail]);
+
+
+
+useEffect(() => {
+  fetchProfile();
+  }, []);
+  
+
 
   return (
     <>
-      {status === "loading" && <p>Loading...</p>}
+          {status === "loading" && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
       <div className="card sticky-top">

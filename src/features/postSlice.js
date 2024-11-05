@@ -1,33 +1,51 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 // const api = "http://localhost:3000";
-const api = "https://major-project2-part1-backend.vercel.app";
+const api = "https://major-project2-backend.vercel.app";
+
+
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const res = await axios.get(`${api}/fetchPost`);
-  console.log(res);
+  const res = await axios.get(`${api}/post`);
 
   return res.data;
 });
+
+
 
 export const postPost = createAsyncThunk("posts/postPost", async ({ newData }) => {
-  const res = await axios.post(`${api}/post`, newData);
-  console.log(res);
+  const res = await axios.post(`${api}/post`, newData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  // const res = await axios.post(`${api}/post`, newData, {
+  //   headers: {
+  //     "Content-Type": "multipart/form-data",
+  //   },
+  //   withCredentials: true,  
+  // });
   return res.data;
 });
+
 
 export const editPost = createAsyncThunk("posts/editPost", async ({ id, newData }) => {
-  console.log("id", id);
-  console.log("newData", newData);
-
   const res = await axios.put(`${api}/editPost/${id}`, newData);
-  console.log(res);
   return res.data;
 });
+
+// export const editPost = createAsyncThunk("posts/editPost", async ({ id, newData }) => {
+//   const res = await axios.put(`${api}/post/editPost/${id}`, newData,{
+//     headers: {
+//       "Content-Type": "multipart/form-data",
+//     },
+//   });
+//   return res.data;
+// });
+
 
 export const deletePost = createAsyncThunk("post/deletePost", async (id) => {
   const res = await axios.delete(`${api}/deletePost/${id}`);
-  console.log(res);
   return res.data;
 });
 
@@ -39,28 +57,16 @@ export const postComment = createAsyncThunk("posts/postComments", async ({ postI
 
 export const deleteComment = createAsyncThunk("post/deleteComment", async ({ commentId }) => {
   const res = await axios.delete(`${api}/post/deleteComent/${commentId}`);
-  console.log(res);
   return res.data;
 });
 
-export const addBookMark = createAsyncThunk("post/addBookMark", async ({ id, dataToadd }) => {
-  const res = await axios.post(`${api}/post/bookmark/${id}`, dataToadd);
-  return res.data;
-});
 
-export const removeBookMark = createAsyncThunk("post/removeBookMark", async ({ id, dataToRemove }) => {
-  console.log(dataToRemove);
-
-  const res = await axios.delete(`${api}/post/removeBookmark/${id}`, { data: dataToRemove });
-  return res.data;
-});
 export const addLikes = createAsyncThunk("post/addLikes", async ({ id, dataToAdd }) => {
   const res = await axios.post(`${api}/post/like/${id}`, dataToAdd);
   return res.data;
 });
 
 export const removeLikes = createAsyncThunk("post/removeLikes", async ({ id, dataToRemove }) => {
- 
   const res = await axios.delete(`${api}/post/like/${id}`, { data: dataToRemove });
   return res.data;
 });
@@ -80,7 +86,8 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "success";
-        state.posts = action.payload;
+        state.posts = action.payload.reverse();
+       
       })
       .addCase(fetchPosts.rejected, async (state, action) => {
         state.status = "failed";
@@ -91,12 +98,17 @@ const postSlice = createSlice({
       .addCase(postPost.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(postPost.fulfilled, (state, action) => {
-        state.status = "success";
-        console.log("action.payload", action.payload);
+      // .addCase(postPost.fulfilled, (state, action) => {
+      //   state.status = "success";
 
-        state.posts = action.payload;
-        console.log("post post", action.payload);
+      //   state.posts = action.payload;
+      // })
+      .addCase(postPost.fulfilled, (state, action) => {
+        return {
+          ...state,
+          status: "success",
+          posts: action.payload,
+        };
       })
 
       .addCase(postPost.rejected, async (state, action) => {
@@ -110,10 +122,8 @@ const postSlice = createSlice({
       })
       .addCase(editPost.fulfilled, (state, action) => {
         state.status = "success";
-        console.log("action.payload", action.payload);
 
         state.posts = action.payload;
-        console.log("post post", action.payload);
       })
 
       .addCase(editPost.rejected, async (state, action) => {
@@ -127,7 +137,6 @@ const postSlice = createSlice({
       })
       .addCase(deletePost.fulfilled, (state, action) => {
         state.status = "success";
-        console.log("Action.payload", action.payload);
 
         state.posts = state.posts.filter((posts) => posts._id !== action.payload.post._id);
       })
@@ -145,7 +154,7 @@ const postSlice = createSlice({
         state.status = "succeeded";
         const updatedPost = state.posts.find((post) => post._id === action.payload._id);
         if (updatedPost) {
-          updatedPost.comments = action.payload.comments;
+          updatedPost.comments = action.payload.comments.reverse();
         }
       })
       .addCase(postComment.rejected, (state, action) => {
@@ -172,50 +181,17 @@ const postSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
-      //addBookmark
-      .addCase(addBookMark.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(addBookMark.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        console.log("Action.payload", action.payload);
 
-        
-        state.posts = state.posts.map((post) => (post._id === action.payload._id ? action.payload : post));
-      })
-      .addCase(addBookMark.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      //removeBookmark
-      .addCase(removeBookMark.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(removeBookMark.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.posts = state.posts.map((post) =>
-          post._id === action.payload._id
-            ? { ...post, bookmarked: action.payload.bookmarked }
-            : post
-        );
-      })
-      .addCase(removeBookMark.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
+      
 
-
-
-
-      //Liked 
+      //Liked
       .addCase(addLikes.pending, (state) => {
         state.status = "loading";
       })
       .addCase(addLikes.fulfilled, (state, action) => {
         state.status = "succeeded";
-        console.log("Action.payload addLike", action.payload);
+        console.log("action.payload like", action.payload);
 
-        
         state.posts = state.posts.map((post) => (post._id === action.payload._id ? action.payload : post));
       })
       .addCase(addLikes.rejected, (state, action) => {
@@ -228,11 +204,7 @@ const postSlice = createSlice({
       })
       .addCase(removeLikes.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.posts = state.posts.map((post) =>
-          post._id === action.payload._id
-            ? { ...post, likes: action.payload.likes }
-            : post
-        );
+        state.posts = state.posts.map((post) => (post._id === action.payload._id ? { ...post, likes: action.payload.likes } : post));
       })
       .addCase(removeLikes.rejected, (state, action) => {
         state.status = "failed";

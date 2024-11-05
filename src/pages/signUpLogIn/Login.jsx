@@ -1,39 +1,58 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchLogInUser, logInStatus } from "../features/userSlice";
+import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../../utilities/utils";
 
 const Login = () => {
-  const [emailLogin, setEmailLogin] = useState("");
-  const [passwordLogin, setPasswordLogin] = useState("");
-  const [logInValue, setlogInValue] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state);
-  const dataUser = user?.profile;
+  //auth
+  const [logInInfo, setLogInInfo] = useState({
+    email: "",
+    password: "",
+  });
 
-  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  
-  useEffect(() => {
-    dispatch(fetchLogInUser());
-  }, [dispatch]);
+    const copyLogInInfo = { ...logInInfo };
+    copyLogInInfo[name] = value;
+    setLogInInfo(copyLogInInfo);
+  };
 
-  const logInClickHandler = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const userProfile = dataUser?.find((userProfilee) => userProfilee.email === emailLogin);
-  
-    
-    const passwordMatch = userProfile?.password === passwordLogin;
-   
-    const loginStatus =  !passwordMatch ? "email or password is incorrect" : "Successfully login";
-    setlogInValue(loginStatus);
-
-    if (userProfile && passwordMatch) {
-      const logIn = { logIn: true };
-      dispatch(logInStatus({ id: userProfile._id, updateprofile: logIn }));
-      navigate("/mainPage");
+    const { email, password } = logInInfo;
+    if (!email || !password) {
+      return handleError(" email and password are required");
+    }
+    try {
+      const url = `https://major-project2-backend.vercel.app/auth/logIn`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(logInInfo),
+      });
+      const result = await response.json();
+      const { success, message, token, error } = result;
+      if (success) {
+        handleSuccess(message);
+        localStorage.setItem("token", token);
+        setTimeout(() => {
+          navigate("/mainPage");
+        }, 1000);
+      } else if (error) {
+        const details = error?.details[0].message;
+        handleError(details);
+      } else if (!success) {
+        handleError(message);
+      }
+     
+    } catch (err) {
+      handleError(err);
     }
   };
 
@@ -51,16 +70,16 @@ const Login = () => {
                     <br /> Connect, share, and explore with a community built just for you!
                   </p>
                 </div>
-                <form>
+                <form onSubmit={handleLogin}>
                   <div className="d-flex position-relative">
                     <i className="position-absolute  bi bi-person-square h2 text-secondary" style={{ top: "-1px", left: "3px" }}></i>
-                    <input type="text" className="form-control text-center px-5" placeholder="Email or userName" value={emailLogin} onChange={(e) => setEmailLogin(e.target.value)} />
+                    <input type="email" className="form-control text-center px-5" placeholder="Enter your email... " name="email" value={logInInfo.email} onChange={handleChange} />
                   </div>
 
                   <br />
                   <div className="d-flex position-relative">
                     <i className="position-absolute  bi bi-shield-lock-fill h2 text-secondary " style={{ top: "-1px", left: "3px" }}></i>
-                    <input type="password" className="form-control px-5 text-center " placeholder="Password" value={passwordLogin} onChange={(e) => setPasswordLogin(e.target.value)} />
+                    <input type="password" name="password" className="form-control px-5 text-center " placeholder="Password" value={logInInfo.password} onChange={handleChange} />
                   </div>
                   <a className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="/">
                     Forgot Password?
@@ -69,7 +88,7 @@ const Login = () => {
                   <br />
                   <br />
                   <div className="text-center">
-                    <button className="btn btn-primary w-100" onClick={logInClickHandler}>
+                    <button className="btn btn-primary w-100" type="submit">
                       Log In
                     </button>
                     <a className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover fw-bold " href="/signUp">
@@ -77,7 +96,6 @@ const Login = () => {
                     </a>
                   </div>
                 </form>
-                <p>{logInValue}</p>
               </div>
             </div>
             <div className="col-md-6">
@@ -105,6 +123,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

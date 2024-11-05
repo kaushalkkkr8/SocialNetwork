@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 // const api = "http://localhost:3000";
-const api = "https://major-project2-part1-backend.vercel.app";
+const api = "https://major-project2-backend.vercel.app";
 
-export const fetchLogInUser = createAsyncThunk("user/fetchUser", async () => {
-  const res = await axios.get(`${api}/profile`);
+export const fetchUser = createAsyncThunk("user/fetchUser", async () => {
+  const res = await axios.get(`${api}/userProfile`);
+  
+  
   return res.data;
 });
 
@@ -19,32 +21,37 @@ export const logInStatus = createAsyncThunk("user/updateLogIn", async ({ id, upd
 });
 
 export const editProfile = createAsyncThunk("user/editProfile", async ({ id, updateProfile }) => {
-  const res = await axios.put(`${api}/editProfile/${id}`, updateProfile);
+  const res = await axios.put(`${api}/profile/editProfile/${id}`, updateProfile,{
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
   return res.data;
 });
 
-export const addFollowing = createAsyncThunk("user/addFollowing", async ({ id, updateFollowing }) => {
-  const res = await axios.put(`${api}/profile/addFollowing/${id}`, updateFollowing);
 
+
+export const addFollow = createAsyncThunk("user/addFollow", async ({ id, targetUserId }) => {
+  const res = await axios.put(`${api}/profile/follow/${id}`, { targetUserId });
+  console.log("add",res);
   return res.data;
 });
 
-export const addFollower = createAsyncThunk("user/addFollower", async ({ id, updateFollower }) => {
-  const res = await axios.put(`${api}/profile/addFollower/${id}`, updateFollower);
-  console.log(res);
-
+export const deleteFollow = createAsyncThunk("user/deleteFollow", async ({ id, targetUserId }) => {
+  const res = await axios.put(`${api}/profile/unfollow/${id}`, { targetUserId });
+  console.log("delete",res);
   return res.data;
 });
 
-export const deleteFollower = createAsyncThunk("user/deleteFollower", async (id) => {
-  const res = await axios.delete(`${api}/profile/removeFollower/${id}`);
-  console.log(res);
+
+export const addBookMark = createAsyncThunk("user/addBookMark", async ({ id, dataToadd }) => {
+  const res = await axios.post(`${api}/profile/bookmark/${id}`, dataToadd);
   return res.data;
 });
-export const deleteFollowing = createAsyncThunk("user/deleteFollowing", async (id) => {
-  const res = await axios.delete(`${api}/profile/removeFollowing/${id}`);
-  console.log(res);
+
+export const removeBookMark = createAsyncThunk("user/removeBookMark", async ({ id, dataToRemove }) => {
+  const res = await axios.delete(`${api}/profile/removeBookmark/${id}`, { data: dataToRemove });
   return res.data;
 });
 
@@ -57,150 +64,140 @@ const userSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
+    builder
     // fetchUser
-    builder.addCase(fetchLogInUser.pending, (state) => {
+    .addCase(fetchUser.pending, (state) => {
       state.status = "loading";
-    });
-    builder.addCase(fetchLogInUser.fulfilled, (state, action) => {
+    })
+    .addCase(fetchUser.fulfilled, (state, action) => {
       state.status = "success";
       state.profile = action.payload;
-    });
-    builder.addCase(fetchLogInUser.rejected, async (state, action) => {
+    })
+    .addCase(fetchUser.rejected,  (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
-    });
+    })
     // signUp
-    builder.addCase(postUser.pending, (state) => {
+    .addCase(postUser.pending, (state) => {
       state.status = "loading";
-    });
-    builder.addCase(postUser.fulfilled, (state, action) => {
+    })
+    .addCase(postUser.fulfilled, (state, action) => {
       state.profile = action.payload;
       state.status = "success";
-    });
-    builder.addCase(postUser.rejected, (state, action) => {
+    })
+    
+    .addCase(postUser.rejected, (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
-    });
+    })
     // logIn status
-    builder.addCase(logInStatus.pending, (state) => {
+    .addCase(logInStatus.pending, (state) => {
       state.status = "loading";
-    });
-    builder.addCase(logInStatus.fulfilled, (state, action) => {
+    })
+    .addCase(logInStatus.fulfilled, (state, action) => {
       state.status = "success";
       const updatedLogIn = state.profile.find((user) => user._id === action.payload._id);
       if (updatedLogIn) {
         updatedLogIn.logIn = action.payload.logIn;
       }
-    });
-    builder.addCase(logInStatus.rejected, (state, action) => {
+    })
+    .addCase(logInStatus.rejected, (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
-    });
+    })
 
     // edit profile
-    builder.addCase(editProfile.pending, (state) => {
+    .addCase(editProfile.pending, (state) => {
       state.status = "loading";
-    });
-    builder.addCase(editProfile.fulfilled, (state, action) => {
+    })
+   .addCase(editProfile.fulfilled, (state, action) => {
       state.status = "success";
       const index = state.profile.findIndex((user) => user._id === action.payload._id);
 
       if (index !== -1) {
         state.profile[index] = { ...state.profile[index], ...action.payload };
       }
-    });
-    builder.addCase(editProfile.rejected, (state, action) => {
+    })
+    .addCase(editProfile.rejected, (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
-    });
+    })
 
-    // Add Following
-    builder.addCase(addFollowing.pending, (state) => {
+   
+
+.addCase(addFollow.pending, (state) => {
       state.status = "loading";
-    });
-    builder.addCase(addFollowing.fulfilled, (state, action) => {
+    })
+   .addCase(addFollow.fulfilled, (state, action) => {
       state.status = "success";
 
-      const updatedProfile = state.profile.find((user) => user._id === action.payload._id);
-      if (updatedProfile) {
-        updatedProfile.following = action.payload.following;
+      const { updatedUserProfile, updatedTargetProfile } = action.payload;
+
+      const userProfileIndex = state.profile.findIndex((user) => user._id === updatedUserProfile._id);
+      const targetProfileIndex = state.profile.findIndex((user) => user._id === updatedTargetProfile._id);
+
+      if (userProfileIndex !== -1 && targetProfileIndex !== -1) {
+        state.profile[userProfileIndex] = updatedUserProfile;
+        state.profile[targetProfileIndex] = updatedTargetProfile;
       }
-    });
-    builder.addCase(addFollowing.rejected, (state, action) => {
+    })
+   .addCase(addFollow.rejected, (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
-    });
+    })
 
-    // Add Follower
-    builder.addCase(addFollower.pending, (state) => {
-      state.status = "loading";
-    });
-    builder.addCase(addFollower.fulfilled, (state, action) => {
-      state.status = "success";
-
-      const updatedProfile = state.profile.find((user) => user._id === action.payload._id);
-      if (updatedProfile) {
-        updatedProfile.follower = action.payload.follower;
-      }
-    });
-    builder.addCase(addFollower.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
-    });
-
-    //delete follower
-
-    builder.addCase(deleteFollower.pending, (state) => {
-      state.status = "loading";
-    });
-    builder.addCase(deleteFollower.fulfilled, (state, action) => {
-      state.status = "success";
-      console.log("action delet flr", action.payload);
     
-      
-      const userIndex = state.profile.findIndex(profile => profile._id === action.payload.profile._id);
-      console.log("userIndex D flr",userIndex);
 
-      if (userIndex !== -1) {
-        state.profile[userIndex] = action.payload.profile;
-      }
-      
-
-      // state.profile = state.profile.map((user) => {
-      //   if (user._id === action.payload.profile._id) {
-      //     return {
-      //       ...user.follower,
-      //       follower: action.payload.profile.follower,
-      //     };
-      //   }
-      //   return user;
-      // });
-    });
-    builder.addCase(deleteFollower.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
-    });
-
-    //Delete following
-    builder.addCase(deleteFollowing.pending, (state) => {
+    .addCase(deleteFollow.pending, (state) => {
       state.status = "loading";
-    });
-    builder.addCase(deleteFollowing.fulfilled, (state, action) => {
+    })
+    .addCase(deleteFollow.fulfilled, (state, action) => {
       state.status = "success";
-      console.log("action delet fling", action.payload);
 
-      const userIndex = state.profile.findIndex(profile => profile._id === action.payload.deleteData._id);
-      console.log("userIndex D flng",userIndex);
+      const { updatedUserProfile, updatedTargetProfile } = action.payload;
 
-      if (userIndex !== -1) {
-        state.profile[userIndex] = action.payload.deleteData;
+      const userProfileIndex = state.profile.findIndex((user) => user._id === updatedUserProfile._id);
+      const targetProfileIndex = state.profile.findIndex((user) => user._id === updatedTargetProfile._id);
+
+      if (userProfileIndex !== -1 && targetProfileIndex !== -1) {
+        state.profile[userProfileIndex] = updatedUserProfile;
+        state.profile[targetProfileIndex] = updatedTargetProfile;
       }
-    });
+    })
+   
+      .addCase(deleteFollow.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
 
-    builder.addCase(deleteFollowing.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
-    });
+      //addBookmark
+      .addCase(addBookMark.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addBookMark.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        console.log("action.payload", action.payload);
+        const indexOf = state.profile.findIndex((profile) => profile._id === action.payload._id);
+        if (indexOf !== -1) {
+          state.profile[indexOf] = action.payload;
+        }
+      })
+      .addCase(addBookMark.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      //removeBookmark
+      .addCase(removeBookMark.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(removeBookMark.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.profile = state.profile.map((profile) => (profile._id === action.payload._id ? { ...profile, bookmarked: action.payload.bookmarked } : profile));
+      })
+      .addCase(removeBookMark.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
   },
 });
 export default userSlice.reducer;

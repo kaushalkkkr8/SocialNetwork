@@ -2,18 +2,15 @@ import { useDispatch, useSelector } from "react-redux";
 import UserProfileLeft from "../../components/UserProfileleLeft";
 import UserProfileRight from "../../components/UserProfileRight";
 import UserProfileTop from "../../components/UserProfileTop";
-import { editProfile, fetchLogInUser } from "../../features/userSlice";
+import { editProfile, fetchUser } from "../../features/userSlice";
 import { useEffect, useState } from "react";
+import { handleError } from "../../utilities/utils";
 
 const EditProfile = () => {
   const dispatch = useDispatch();
+  const [logInDetail, setLogInDetail] = useState("");
 
-  const { user } = useSelector((state) => state);
-  const data = user?.profile || [];
-  const userData = data.find((user) => user.logIn === true);
- 
-
-  const [nameOfUser, setNameofUser] = useState("");
+  const [nameOfUser, setNameOfUser] = useState("");
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [date, setDate] = useState("");
@@ -23,18 +20,46 @@ const EditProfile = () => {
   const [maritialStatus, setMaritialStatus] = useState("");
   const [profession, setProfession] = useState("");
   const [bio, setBio] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
+  const [coverImage, setCoverImage] = useState(null);
 
+  const fetchProfile = async () => {
+    try {
+      const url = "https://major-project2-backend.vercel.app/profile";
+      const headers = {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      };
+      const response = await fetch(url, headers);
+      const result = await response.json();
 
+      if (result.success) {
+        setLogInDetail(result.profile);
+      }
+    } catch (err) {
+      handleError(err);
+    }
+  };
+
+  const { profile,status,error } = useSelector((state) => state.user);
+  const allUser = profile || [];
+  const userData = allUser.find((userss) => userss._id === logInDetail?._id);
 
   useEffect(() => {
-    if (!userData) { // Ensure userData exists
-      dispatch(fetchLogInUser());
-    }
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (userData) {
-      setNameofUser(userData.name);
+      setNameOfUser(userData.name);
       setEmail(userData.email);
       setUserName(userData.userName);
-      setDate(userData.dob)
+      setDate(userData.dob);
       setCity(userData.city);
       setCountry(userData.country);
       setPhone(userData.phoneNumber);
@@ -42,24 +67,56 @@ const EditProfile = () => {
       setProfession(userData.profession);
       setBio(userData.bio);
     }
-  }, [dispatch,userData]);
+  }, [userData,profile]);
 
-  const submitHandler=(e)=>{
-e.preventDefault()
-    const updateData={name:nameOfUser,email:email,userName:userName,dob:date,city,country,phoneNumber:phone,maritialStatus,profession,bio}
-    dispatch(editProfile({id:userData._id,updateProfile:updateData}))
-    
-  }
+  const handleProfileImageChange = (e) => {
+    setProfileImage(e.target.files[0]);
+  };
+
+  const handleCoverImageChange = (e) => {
+    setCoverImage(e.target.files[0]);
+  };
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", nameOfUser);
+    formData.append("email", email);
+    formData.append("userName", userName);
+    formData.append("dob", date);
+    formData.append("city", city);
+    formData.append("country", country);
+    formData.append("phoneNumber", phone);
+    formData.append("maritialStatus", maritialStatus);
+    formData.append("profession", profession);
+    formData.append("bio", bio);
+
+    if (profileImage) formData.append("image", profileImage);
+    if (coverImage) formData.append("coverImage", coverImage);
+
+    dispatch(editProfile({ id: userData._id, updateProfile: formData }));
+  };
+
+
 
   return (
     <>
       <div className="container-fluid">
-        <UserProfileTop />
+      <UserProfileTop userDetail={userData} />
 
         <div className=" my-4">
+        {status == "loading" && (
+            <div className="d-flex justify-content-center mt-3">
+              <div className="spinner-border" role="status">
+                <span className="sr-only"></span>
+              </div>
+            </div>
+          )}
           <div className="row">
             <div className="col-md-3">
-              <UserProfileLeft />
+              
+            <UserProfileLeft userDetail={userData} />
             </div>
             <div className="col-md-6">
               <section>
@@ -67,13 +124,13 @@ e.preventDefault()
                   <div className="card-body ">
                     <h5 className="card-title text-center">Edit Profile</h5>
                     <div className="container">
-                      <form action="">
+                      <form  onSubmit={submitHandler}>
                         <div className="row my-3">
                           <div className="col-md-3">
                             <label>Profile Photo</label>
                           </div>
                           <div className="col">
-                            <input class="form-control rounded-pill bg-light" type="file" id="formFile" />
+                            <input className="form-control rounded-pill bg-light" type="file" id="formFile" onChange={handleProfileImageChange} />
                           </div>
                         </div>
                         <div className="row my-3">
@@ -81,7 +138,7 @@ e.preventDefault()
                             <label>Cover Image</label>
                           </div>
                           <div className="col">
-                            <input class="form-control rounded-pill bg-light" type="file" id="formFile2" />
+                            <input className="form-control rounded-pill bg-light" type="file" id="formFile2"  onChange={handleCoverImageChange}/>
                           </div>
                         </div>
                         <div className="row my-3">
@@ -89,7 +146,7 @@ e.preventDefault()
                             <label htmlFor="name">Name</label>
                           </div>
                           <div className="col">
-                            <input type="text" id="name" placeholder="Name" className="form-control rounded-pill bg-light" value={nameOfUser} onChange={(e) => setNameofUser(e.target.value)} />
+                            <input type="text" id="name" placeholder="Name" className="form-control rounded-pill bg-light" value={nameOfUser} onChange={(e) => setNameOfUser(e.target.value)} />
                           </div>
                         </div>
                         <div className="row my-3">
@@ -124,7 +181,7 @@ e.preventDefault()
                             </label>
                           </div>
                           <div className="col">
-                            <input id="startDate" class="form-control rounded-pill bg-light" type="date" value={date} onChange={e=>setDate(e.target.value)}  />
+                            <input id="startDate" className="form-control rounded-pill bg-light" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                           </div>
                         </div>
                         <div className="row my-3">
@@ -148,11 +205,11 @@ e.preventDefault()
                             <label htmlFor="phone">Phone</label>
                           </div>
                           <div className="col">
-                            <div class="input-group mb-3">
-                              <span class="input-group-text rounded-pill" id="basic-addon1">
+                            <div className="input-group mb-3">
+                              <span className="input-group-text rounded-pill" id="basic-addon1">
                                 +91
                               </span>
-                              <input type="number" class="form-control rounded-pill bg-light" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                              <input type="number" className="form-control rounded-pill bg-light" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
                             </div>
                           </div>
                         </div>
@@ -162,7 +219,7 @@ e.preventDefault()
                           </div>
                           <div className="col">
                             <select className="form-select rounded-pill bg-light" value={maritialStatus} onChange={(e) => setMaritialStatus(e.target.value)}>
-                              <option value="" disabled selected>
+                              <option value="" disabled>
                                 Status
                               </option>
                               <option value="Single">Single</option>
@@ -193,7 +250,7 @@ e.preventDefault()
                             <label htmlFor="bio ">Bio</label>
                           </div>
                           <div className="col">
-                            <form className="w-100">
+                            <div className="w-100">
                               <textarea
                                 className="form-control pe-4 rounded bg-light"
                                 rows="2"
@@ -202,11 +259,13 @@ e.preventDefault()
                                 value={bio}
                                 onChange={(e) => setBio(e.target.value)}
                               ></textarea>
-                            </form>
+                            </div>
                           </div>
                         </div>
                         <div className="text-center">
-                          <button className=" btn btn-success " onClick={submitHandler}>Update</button>
+                          <button className=" btn btn-success " type="submit">
+                            Update
+                          </button>
                         </div>
                       </form>
                     </div>

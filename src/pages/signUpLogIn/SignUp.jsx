@@ -1,49 +1,65 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { postUser } from "../features/userSlice";
+import { postUser } from "../../features/userSlice";
 import { useNavigate } from "react-router-dom";
+import { handleError, handleSuccess } from "../../utilities/utils";
+import { ToastContainer } from "react-toastify";
 
 const SignUp = () => {
-  const [name, setName] = useState("");
-  const [userName, setUserName] = useState("");
-  const [sex, setSex] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // const signUpHandler=(e)=>{
-  //   e.preventDefault()
-  //   const dataSignUp={name,userName,sex,email,password}
-  //   dispatch(postUser(dataSignUp))
+  //new auth
+  const [signupInfo, setSignupInfo] = useState({
+    name: "",
+    email: "",
+    userName: "",
+    sex: "",
+    password: "",
+  });
 
-  //   alert("Successfully Signed Up",navigate('/logIn'))
-  //   setName('')
-  //   setUserName('')
-  //   setSex('')
-  //   setEmail('')
-  //   setPassword('')
-  // }
-  const signUpHandler = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    const copySignupInfo = { ...signupInfo };
+    copySignupInfo[name] = value;
+    setSignupInfo(copySignupInfo);
+  };
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    const dataSignUp = { name, userName, sex, email, password };
+    const { name, email, userName, sex, password } = signupInfo;
+    if (!name || !email || !password || !userName || !sex) {
+      return handleError("name, email,userName,gender and password are required");
+    }
     try {
-      await dispatch(postUser(dataSignUp)).unwrap();
-      alert("Successfully Signed Up");
-      navigate("/logIn");
-      setName("");
-      setUserName("");
-      setSex("");
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      if (error.response && error.response.data.error) {
-        alert(error.response.data.error); // Display error message (e.g., "Username already exists")
-      } else {
-        alert("Email or Username is used by other user");
+      const url = `https://major-project2-backend.vercel.app/auth/signUp`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(signupInfo),
+      });
+      const result = await response.json();
+      const { success, message, error } = result;
+      if (success) {
+        handleSuccess(message);
+        setTimeout(() => {
+          navigate("/logIn");
+        }, 1000);
+      } else if (error) {
+        const details = error?.details[0].message;
+        handleError(details);
+      } else if (!success) {
+        handleError(message);
       }
+      console.log(result);
+    } catch (err) {
+      handleError(err);
     }
   };
+
   return (
     <>
       <div className="d-flex  justify-content-center ">
@@ -58,20 +74,18 @@ const SignUp = () => {
                     <br /> Join our community and discover endless possibilities
                   </p>
                 </div>
-                <form>
-                  <input type="text" className="form-control text-center px-5" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+                <form onSubmit={handleSignup}>
+                  <input type="text" name="name" className="form-control text-center px-5" placeholder="Name" value={signupInfo.name} onChange={handleChange} />
                   <br />
-                  {/* <input type="file" className="form-control" id="inputGroupFile01" />
-                  <br /> */}
 
                   <div className="input-group mb-3">
                     {/* <span className="input-group-text" id="basic-addon1">
                       @
                     </span> */}
-                    <input type="text" className="form-control text-center px-5" placeholder="UserName: @kaushalkr8" value={userName} onChange={(e) => setUserName(e.target.value)} />
+                    <input type="text" name="userName" className="form-control text-center px-5" placeholder="UserName: @kaushalkr8" value={signupInfo.userName} onChange={handleChange} />
                   </div>
 
-                  <select className="form-select text-center" value={sex} onChange={(e) => setSex(e.target.value)}>
+                  <select className="form-select text-center" name="sex" value={signupInfo.sex} onChange={handleChange}>
                     <option value="" disabled>
                       Gender
                     </option>
@@ -79,20 +93,21 @@ const SignUp = () => {
                     <option value="Female">Female</option>
                   </select>
                   <br />
-                  <input type="email" className="form-control text-center px-5" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <input type="email" name="email" className="form-control text-center px-5" placeholder="Email" value={signupInfo.email} onChange={handleChange} />
                   <br />
                   <input
                     type="password"
                     className="form-control px-5 text-center "
                     placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={signupInfo.password}
+                    name="password"
+                    onChange={handleChange}
                     autoComplete="current-password"
                   />
 
                   <br />
                   <div className="text-center">
-                    <button className="btn btn-primary w-100" onClick={signUpHandler}>
+                    <button className="btn btn-primary w-100" type="submit">
                       {" "}
                       Sign Up
                     </button>
@@ -128,6 +143,7 @@ const SignUp = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

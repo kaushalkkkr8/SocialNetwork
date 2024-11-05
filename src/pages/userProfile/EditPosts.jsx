@@ -10,8 +10,7 @@ const EditPosts = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [avtar, setAvtar] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [editPosts, setEditPost] = useState("");
 
   const avtars = {
@@ -33,16 +32,34 @@ const EditPosts = () => {
     navigate("/mainPage")
   };
 
+
+  // const handleFileChange = (e) => {
+  //   setSelectedFiles(e.target.files);
+  // };
+  // const postClick = () => {
+  //   if (editPosts.trim() || selectedFiles.length > 0) {
+  //     const formData = new FormData();
+  //     formData.append("posts", editPostdata);
+     
+
+  //     Array.from(selectedFiles).forEach((file) => {
+  //       formData.append("image", file);
+  //     });
+  //     const id = editPostdata._id;
+  //     dispatch(editPost({ id,newData: formData }));
+  //     navigate("/mainPage")
+  //     setEditPost("");
+  //     setSelectedFiles([]);
+  //   }
+  // };
+
   useEffect(() => {
     if (editPostdata) {
       setEditPost(editPostdata.posts);
     }
 
-    if (userData?.sex) {
-      const avatar = userData.sex === "Male" ? avtars.male : avtars.female;
-      setAvtar(avatar);
-    }
-  }, [dispatch, editPostdata, userData?.sex]);
+ 
+  }, [ editPostdata]);
 
   return (
     <>
@@ -62,7 +79,11 @@ const EditPosts = () => {
                     <div className="container">
                       <div className="d-flex mb-3">
                         <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
-                          <img className=" rounded-circle" src={userData.image ? userData.image : avtar} alt="avatar3" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        {userData?.image?.length > 0 ? (
+                          <img src={userData?.image[userData?.image?.length - 1].imageURL} className="img-fluid rounded-circle" alt="..." />
+                        ) : (
+                          <img src={userData?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded-circle" alt="..." />
+                        )}
                         </div>
                         <form className="w-100">
                           <textarea
@@ -92,6 +113,34 @@ const EditPosts = () => {
                             Post
                           </button>
                         </form>
+                        {/* <div className="w-100">
+                        <textarea
+                          className="form-control pe-4 border-0"
+                          rows="2"
+                          placeholder="Share your thoughts..."
+                          style={{ resize: "none" }}
+                          value={editPosts}
+                          onChange={(e) => setEditPost(e.target.value)}
+                        ></textarea>
+
+                        <ul className="" style={{ paddingInlineStart: "0" }}>
+                          <li className=" d-inline list-group-item  ">
+                            {" "}
+                            <i className="bi bi-image-fill text-success"></i> Photo
+                          </li>
+                          <li className=" d-inline list-group-item ">
+                            {" "}
+                            <i className="bi bi-camera-reels-fill  text-primary"></i> Video
+                          </li>
+                          <br />
+                          <div className="input-group mb-3 w-50">
+                            <input type="file" className="form-control" id="inputGroupFile02" onChange={handleFileChange} multiple />
+                          </div>
+                        </ul>
+                        <button className="btn btn-primary ms-auto" onClick={postClick}>
+                          Post
+                        </button>
+                      </div> */}
                       </div>
                     </div>
                   </div>
