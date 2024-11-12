@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect,  } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addFollow, deleteFollow, fetchUser } from "../features/userSlice";
-import { handleError } from "../utilities/utils";
 import { Link } from "react-router-dom";
 
 const UserProfileRight = ({ userDetails }) => {
@@ -58,7 +57,7 @@ const UserProfileRight = ({ userDetails }) => {
                   </div>
                   <div className="overflow-hidden">
                     <p className="h6 mb-0">{userDetail.name}</p>
-                    <Link to="/userProfile" state={userDetail} className="mb-0 small text-truncate">
+                    <Link to="/profile" state={userDetail} className="mb-0 small text-truncate">
                       {userDetail.userName}
                     </Link>
                   </div>

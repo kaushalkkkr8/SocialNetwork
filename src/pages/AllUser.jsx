@@ -1,6 +1,5 @@
 import { useDispatch } from "react-redux";
 import { addFollow, deleteFollow } from "../features/userSlice";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const AllUser = ({ allUser, userDetails }) => {
