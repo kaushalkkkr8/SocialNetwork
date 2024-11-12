@@ -1,23 +1,19 @@
-
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addFollow, deleteFollow, fetchUser } from "../features/userSlice";
 import { handleError } from "../utilities/utils";
 import { Link } from "react-router-dom";
 
-const UserProfileRight =({userDetails})  => {
+const UserProfileRight = ({ userDetails }) => {
   const dispatch = useDispatch();
   const avtars = {
     male: "https://i.pinimg.com/736x/2a/86/6f/2a866f7847e6f50c86a1ab8e406f5520.jpg",
     female: "https://gallico.shop/wp-content/plugins/konte-addons/assets/images/person.jpg",
   };
 
-
   const { profile } = useSelector((state) => state.user);
   const allUser = profile || [];
   const logInProfileData = allUser.find((userss) => userss._id === userDetails?._id);
-
 
   useEffect(() => {
     dispatch(fetchUser());
@@ -26,16 +22,12 @@ const UserProfileRight =({userDetails})  => {
   const followings = allUser?.filter((user) => logInProfileData?.following?.some((follow) => follow.user === user._id));
   const followers = allUser?.filter((user) => logInProfileData?.follower?.some((follow) => follow.user === user._id));
 
-  
   const followingHandeler = (profileId) => {
-
-
     const profileForFollowing = allUser?.find((user) => user._id === profileId);
 
     const targetUserId = profileForFollowing?._id;
 
     const isFollowing = logInProfileData?.following?.some((f) => f.user === profileId);
-
 
     if (isFollowing) {
       dispatch(deleteFollow({ id: logInProfileData?._id, targetUserId }));
@@ -88,7 +80,7 @@ const UserProfileRight =({userDetails})  => {
               return (
                 <div className="d-flex mb-3" key={userDetail._id}>
                   <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
-                    <Link to="/userProfile" state={userDetail}>
+                    <Link to="/profile" state={userDetail}>
                       {userDetail?.image?.length > 0 ? (
                         <img src={userDetail?.image[userDetail?.image?.length - 1].imageURL} className="img-fluid" alt="..." />
                       ) : (
@@ -98,7 +90,7 @@ const UserProfileRight =({userDetails})  => {
                   </div>
                   <div className="overflow-hidden">
                     <p className="h6 mb-0">{userDetail.name}</p>
-                    <Link to="/userProfile" state={userDetail} className="mb-0 small text-truncate">
+                    <Link to="/profile" state={userDetail} className="mb-0 small text-truncate">
                       {userDetail.userName}
                     </Link>
                   </div>

@@ -40,14 +40,18 @@ const AllUser = ({ allUser, userDetails }) => {
         return(
         <div className="col-md-6" key={userDetail._id}>
           <div className="card my-2" >
+          <Link to="/profile" state={userDetail}>
             {userDetail?.image?.length > 0 ? (
               <img src={userDetail.image[userDetail.image.length - 1].imageURL} className="card-img-top img-fluid" alt="profilePic" style={{maxHeight:"273px"}} />
             ) : (
               <img src={userDetail.sex === "Male" ? avtars.male : avtars.female} className="card-img-top" alt="defaultAvatar" style={{maxHeight:"273px"}}/>
             )}
+            </Link>
             <div className="card-body text-center">
               <h5 className="card-title">{userDetail.name}</h5>
+              <Link to="/profile" state={userDetail}>
               <p className="card-text">{userDetail.userName}</p>
+              </Link>
             </div>
             <button className={folloButtonClass} onClick={() => followingHandeler(userDetail?._id)}>{followButtonText}</button>
            
