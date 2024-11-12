@@ -1,33 +1,28 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addLikes, deleteComment, deletePost, fetchPosts, postComment, postPost, removeLikes } from "../features/postSlice";
-import { addBookMark, fetchUser, removeBookMark } from "../features/userSlice";
-import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import MainPageLeft from "../components/MainPageLeft";
-import MainPageRight from "../components/MainPageRight";
+import { fetchUser } from "../features/userSlice";
 import { handleError } from "../utilities/utils";
-// import { toast, ToastContainer } from "react-toastify";
+import MainPageRight from "../components/MainPageRight";
+import Posts from "./Posts";
+import Navbar from "../components/Navbar";
+import { Link, useLocation } from "react-router-dom";
+import AllUser from "./AllUser";
+import EditPost from "./userProfile/EditPosts";
 
 const MainPage = () => {
   const dispatch = useDispatch();
-  const [postValue, setPostValue] = useState("");
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [comments, setComments] = useState({});
+
   const [logInDetail, setLogInDetail] = useState("");
+  const [allPosts, setAllPosts] = useState(true);
+  const [allProfile, setAllProfile] = useState(false);
+  const [editPost, setEditPost] = useState(false);
+  const location = useLocation();
+console.log("location",location);
 
   const avtars = {
     male: "https://i.pinimg.com/736x/2a/86/6f/2a866f7847e6f50c86a1ab8e406f5520.jpg",
     female: "https://gallico.shop/wp-content/plugins/konte-addons/assets/images/person.jpg",
   };
-
-  
-
-  const { posts, status, error } = useSelector((state) => state.post);
-  const data1 = posts || [];
-
-
-
   const fetchProfile = async () => {
     try {
       const url = "https://major-project2-backend.vercel.app/profile";
@@ -47,11 +42,9 @@ const MainPage = () => {
     }
   };
 
-
-  const { profile } = useSelector((state) => state.user);
+  const { profile, status } = useSelector((state) => state.user);
   const allUser = profile || [];
   const userData = allUser.find((userss) => userss._id === logInDetail?._id);
-
 
   useEffect(() => {
     fetchProfile();
@@ -61,279 +54,107 @@ const MainPage = () => {
     dispatch(fetchUser());
   }, [dispatch]);
 
-  const handleFileChange = (e) => {
-    setSelectedFiles(e.target.files);
-  };
-
-  const postClick = () => {
-    if (postValue.trim() || selectedFiles.length > 0) {
-      const formData = new FormData();
-      formData.append("posts", postValue);
-      formData.append("user", userData._id);
-
-      Array.from(selectedFiles).forEach((file) => {
-        formData.append("image", file);
-      });
-
-      dispatch(postPost({ newData: formData }));
-
-      setPostValue("");
-      setSelectedFiles([]);
-    }
-  };
-
-  const deletePostHandler = (id) => {
-    dispatch(deletePost(id));
-  };
-
-  const postComentHandler = (postId) => {
-    const commentText = comments[postId] || "";
-    if (commentText.trim()) {
-      const newComment = {
-        user: userData._id,
-        comment: commentText,
-      };
-
-      dispatch(postComment({ postId, newData: newComment }));
-      setComments((prev) => ({ ...prev, [postId]: "" }));
-    }
-  };
-
-  const handleCommentChange = (postId, value) => {
-    setComments((prev) => ({ ...prev, [postId]: value }));
-  };
-
-  const deletePostCommentHandler = (commentId) => {
-    dispatch(deleteComment({ commentId }));
-  };
-
-  const bookmarkButton = (postId) => {
-    const userId = userData?._id;
-    const isBookmarked = userData?.bookmarked?.some((bookmark) => bookmark.post === postId);
-
-    if (isBookmarked) {
-      dispatch(removeBookMark({ id: postId, dataToRemove: { userId } }));
-    } else {
-      dispatch(addBookMark({ id: postId, dataToadd: { userId } }));
-    }
-  };
-
-  const likeButton = (id) => {
-    const likedBy = userData?._id;
-    const postTobeLiked = data1?.find((post) => post._id === id);
-    const isLiked = postTobeLiked?.likes?.some((liked) => liked.user === likedBy);
-
-    if (isLiked) {
-      dispatch(removeLikes({ id, dataToRemove: { liked: likedBy } }));
-    } else {
-      dispatch(addLikes({ id, dataToAdd: { liked: likedBy } }));
-    }
-  };
-
   useEffect(() => {
-    if (!data1.length) {
-      dispatch(fetchPosts());
+    if (location.state) {
+      setEditPost(true);
+      setAllPosts(false);
+      setAllProfile(false);
     }
-  }, [data1.length]);
+  }, [location.state]);
 
+  const homePagePostHandler = (e) => {
+    e.preventDefault();
+    setAllPosts(true);
+    setAllProfile(false);
+  };
+
+  const homePageProfileHandler = (e) => {
+    e.preventDefault();
+    setAllPosts(false);
+    setAllProfile(true);
+  };
+  const onSeeMore = () => {
+    setAllProfile(true);
+    setAllPosts(false);
+  };
   return (
     <>
       <Navbar />
-      {status == "loading" && (
-            <div className="d-flex justify-content-center mt-3">
-              <div className="spinner-border" role="status">
-                <span className="sr-only"></span>
-              </div>
-            </div>
-          )}
+
       <div className="container-fluid my-2">
         <div className="row">
-          {/*================================================================= Left bar =================*/}
-          <MainPageLeft />
+          <div className="col-md-3">
+            <div className="card sticky-top">
+              {userData?.coverImage?.length > 0 ? (
+                <img src={userData?.coverImage[userData?.coverImage?.length - 1].imageURL} className="card-img-top img-fluid" alt="..." style={{ maxHeight: "40px", objectFit: "cover" }} />
+              ) : null}
+              <div className="d-flex justify-content-center ">
+                <div className="mt-3" style={{ maxWidth: "90px" }}>
+                  {userData?.image?.length > 0 ? (
+                    <img src={userData?.image[userData?.image?.length - 1].imageURL} className="img-fluid" alt="..." />
+                  ) : (
+                    <img src={userData?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid" alt="..." />
+                  )}
+                </div>
+              </div>
+              <div className="card-body text-center">
+                <h5 className="card-title">{userData?.name}</h5>
+                <Link to="/userProfile" className="card-text" style={{ textDecoration: "none" }}>
+                  {userData?.userName}
+                </Link>
+                <p className="card-text">{userData?.profession}</p>
 
-          {/*=============================================center bar =====================================*/}
-      
-          <div className="col-md-6">
-            {userData && (
-              <section>
-                <div className="card  p-4">
-                  <div className="container">
-                    <div className="d-flex mb-3">
-                      <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
-                        {userData?.image?.length > 0 ? (
-                          <img src={userData?.image[userData?.image?.length - 1].imageURL} className="img-fluid rounded-circle" alt="..." />
-                        ) : (
-                          <img src={userData?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded-circle" alt="..." />
-                        )}
-                      </div>
-                      <div className="w-100">
-                        <textarea
-                          className="form-control pe-4 border-0"
-                          rows="2"
-                          placeholder="Share your thoughts..."
-                          style={{ resize: "none" }}
-                          value={postValue}
-                          onChange={(e) => setPostValue(e.target.value)}
-                        ></textarea>
+                <div className="d-flex">
+                  <div className="col ">
+                    <b>{userData?.follower?.length}</b>
+                    <p className="fs-6">Followers</p>
+                  </div>
+                  <div className="col">
+                    <b>{userData?.following?.length}</b>
+                    <p> Following</p>
+                  </div>
+                </div>
+                <hr />
 
-                        <ul className="" style={{ paddingInlineStart: "0" }}>
-                          <li className=" d-inline list-group-item  ">
-                            {" "}
-                            <i className="bi bi-image-fill text-success"></i> Photo
-                          </li>
-                          <li className=" d-inline list-group-item ">
-                            {" "}
-                            <i className="bi bi-camera-reels-fill  text-primary"></i> Video
-                          </li>
-                          <br />
-                          <div className="input-group mb-3 w-50">
-                            <input type="file" className="form-control" id="inputGroupFile02" onChange={handleFileChange} multiple />
-                          </div>
-                        </ul>
-                        <button className="btn btn-primary ms-auto" onClick={postClick}>
-                          Post
-                        </button>
-                      </div>
+                <div className="my-2 text-center">
+                  <div className="row justify-content-center">
+                    <div className="col-md-6">
+                      <Link onClick={homePagePostHandler}>
+                        <i className="bi bi-house-fill"></i>
+                        <p>Home</p>
+                      </Link>
+                    </div>
+
+                    <div className="col-md-6 ">
+                      <Link to="/profile">
+                        <i className=" bi bi-person-lines-fill"></i>
+                        <p>Profile</p>
+                      </Link>
+                    </div>
+                    <div className="col-md-6">
+                      <Link onClick={homePageProfileHandler}>
+                        <i className="bi bi-person-fill"></i>
+                        <p>People</p>
+                      </Link>
                     </div>
                   </div>
                 </div>
-              </section>
-            )}
-
-            {Array.isArray(data1) &&
-              data1.map((post) => {
-                const userOfPostData = allUser?.find((users) => post?.user === users?._id);
-
-                const isBookmarked = userData?.bookmarked?.some((user) => user.post === post._id);
-                const bookmarkClick = isBookmarked ? "bi bi-bookmark-fill ms-auto" : "bi bi-bookmark ms-auto";
-                const isLiked = post?.likes?.some((user) => user.user === userData?._id);
-
-                const likedClick = isLiked ? "bi bi-hand-thumbs-up-fill text-primary" : "bi bi-hand-thumbs-up text-primary";
-                return (
-                  <section key={post?._id}>
-                    <div className="card my-4  p-4">
-                      <div className="container">
-                        <div className="d-flex mb-3">
-                          <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
-                            <Link to="/userProfile" state={post}>
-                              {userOfPostData?.image?.length > 0 ? (
-                                <img src={userOfPostData?.image[userOfPostData?.image?.length - 1].imageURL} className="img-fluid rounded-circle" alt="..." />
-                              ) : (
-                                <img src={userOfPostData?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded-circle" alt="..." />
-                              )}
-                            </Link>
-                          </div>
-                          {/*======================================== POSTS =========================================  */}
-                          <div>
-                            <div className=" d-flex">
-                              <h6 className=" card-title mb-0">
-                                <span role="button">{userOfPostData?.name}</span>
-                              </h6>
-                            </div>
-                            <p className="mb-0 small">{userOfPostData?.userName}</p>
-                          </div>
-                          {userData?._id === post?.user && (
-                            <div className="ms-auto">
-                              <i
-                                className="btn btn-outline-danger bi bi-trash-fill "
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="bottom"
-                                data-bs-title="Delete Post"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => deletePostHandler(post?._id)}
-                              ></i>
-                              <Link to="/userProfile/editPosts" state={{ post, userData }}>
-                                <i className=" ms-3 btn btn-outline-success  bi bi-pencil-fill" style={{ cursor: "pointer" }}></i>
-                              </Link>
-                            </div>
-                          )}
-                        </div>
-                        <div className="card-body">
-                          <p>{post?.posts}.</p>
-                          {post?.postImage && post?.postImage?.map((images) => <img className="card-img m-2" src={images.imageURL} alt="Post" key={images._id}/>)}
-
-                          <br />
-                          <ul className="d-flex" style={{ paddingInlineStart: "0" }}>
-                            <i className={likedClick} onClick={() => likeButton(post?._id)} style={{ cursor: "pointer" }}></i>
-                            <li className=" d-inline list-group-item mx-2 ">Like</li>
-                            <i className=" bi bi-chat-fill text-secondary ms-3"></i> <li className=" d-inline list-group-item mx-2 ">Comments</li>
-                            <i className={bookmarkClick} style={{ cursor: "pointer" }} onClick={() => bookmarkButton(post?._id)}></i>
-                          </ul>
-
-                          {/* ============================== POST COMMENTS ========================================== */}
-                          <div className="d-flex  mb-3">
-                            <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
-                              {userData?.image?.length > 0 ? (
-                                <img src={userData?.image[userData?.image?.length - 1].imageURL} className="img-fluid rounded-circle" alt="..." />
-                              ) : (
-                                <img src={userData?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded-circle" alt="..." />
-                              )}
-                            </div>
-                            <form className="w-100 d-flex">
-                              <textarea
-                                className="form-control  py-2 my-1 bg-light"
-                                rows="1"
-                                placeholder="Add a comment..."
-                                style={{ resize: "none" }}
-                                value={comments[post?._id] || ""}
-                                onChange={(e) => handleCommentChange(post?._id, e.target.value)}
-                              ></textarea>
-                              <i
-                                className="bi bi-pencil-square h4  text-body-secondary"
-                                onClick={() => postComentHandler(post?._id)}
-                                style={{ position: "relative", right: "2rem", top: "0.5rem", cursor: "pointer" }}
-                              ></i>
-                            </form>
-                          </div>
-                          {post?.comments?.map((comnt) => {
-                            const userOfComent = allUser?.find((users) => comnt?.user === users?._id);
-
-                            return (
-                              <div className="d-flex  mb-3 "  key={comnt._id}>
-                                <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }} >
-                                  {userOfComent?.image?.length > 0 ? (
-                                    <img src={userOfComent?.image[userOfComent?.image?.length - 1].imageURL} className="img-fluid rounded-circle" alt="..." />
-                                  ) : (
-                                    <img src={userOfComent?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded-circle" alt="..." />
-                                  )}
-                                </div>
-                                <div className="w-100 ">
-                                  <div className="bg-light rounded-start-top-0 p-3 rounded">
-                                    <div className="d-flex justify-content-between">
-                                      <h6 className="mb-1">
-                                        {userOfComent?.name}
-                                        <p>
-                                          {" "}
-                                          <a href="/"> {userOfComent?.userName} </a>
-                                        </p>
-                                      </h6>
-                                    </div>
-                                    <div className="d-flex">
-                                      <p className="small mb-0">{comnt?.comment}</p>
-                                      {comnt?.user === userData?._id && (
-                                        <div className="ms-auto">
-                                          <i className="bi bi-trash-fill btn btn-outline-danger" onClick={() => deletePostCommentHandler(comnt?._id)}></i>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-                );
-              })}
+              </div>
+            </div>
           </div>
 
-          {/*=============================================right bar =====================================*/}
-          <MainPageRight />
-        </div>
+          <div className="col-md-6">
+            {allPosts && <Posts userDetails={userData} allUser={allUser} />}
+            {allProfile && <AllUser userDetails={userData} allUser={allUser} />}
+            {editPost && <EditPost userDetails={location.state.userDetails} post={location.state.post} />}
+            
+          </div>
 
-        {/* <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} /> */}
+          <div className="col-md-3">
+            {/* <MainPageRight userDetails={userData} allUser={allUser} /> */}
+            <MainPageRight userDetails={userData} allUser={allUser} onSeeMore={onSeeMore} />
+          </div>
+        </div>
       </div>
     </>
   );

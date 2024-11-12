@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-// const api = "http://localhost:3000";
 const api = "https://major-project2-backend.vercel.app";
 
 
@@ -89,6 +88,7 @@ const postSlice = createSlice({
         state.posts = action.payload.reverse();
        
       })
+     
       .addCase(fetchPosts.rejected, async (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
@@ -103,12 +103,14 @@ const postSlice = createSlice({
 
       //   state.posts = action.payload;
       // })
+      // .addCase(postPost.fulfilled, (state, action) =>  ({
+      //   ...state,
+      //   status: "success",
+      //   posts: action.payload,
+      // }))
       .addCase(postPost.fulfilled, (state, action) => {
-        return {
-          ...state,
-          status: "success",
-          posts: action.payload,
-        };
+        state.status = "success";
+        state.posts = action.payload;
       })
 
       .addCase(postPost.rejected, async (state, action) => {
@@ -172,7 +174,7 @@ const postSlice = createSlice({
       const postIndex = state.posts.findIndex((post) => post._id === action.payload.comment._id);
 
       if (postIndex !== -1) {
-        state.posts[postIndex] = action.payload.comment;
+        state.posts[postIndex] = { ...action.payload.comment };
       }
     });
 
@@ -188,11 +190,18 @@ const postSlice = createSlice({
       .addCase(addLikes.pending, (state) => {
         state.status = "loading";
       })
+      // .addCase(addLikes.fulfilled, (state, action) => {
+      //   state.status = "succeeded";
+      //   console.log("action.payload like", action.payload);
+
+      //   state.posts = state.posts.map((post) => (post._id === action.payload._id ? action.payload : post));
+      // })
       .addCase(addLikes.fulfilled, (state, action) => {
         state.status = "succeeded";
-        console.log("action.payload like", action.payload);
-
-        state.posts = state.posts.map((post) => (post._id === action.payload._id ? action.payload : post));
+        const post = state.posts.find((post) => post._id === action.payload._id);
+        if (post) {
+          post.likes = action.payload.likes; // Update likes directly within the found post
+        }
       })
       .addCase(addLikes.rejected, (state, action) => {
         state.status = "failed";
@@ -213,3 +222,63 @@ const postSlice = createSlice({
   },
 });
 export default postSlice.reducer;
+
+
+// postSlice.js
+// postSlice.js
+// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// const api = "https://major-project2-backend.vercel.app";
+// export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (token) => {
+//   const response = await fetch(`${api}/posts`, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   return response.json();
+// });
+
+// const postSlice = createSlice({
+//   name: 'post',
+//   initialState: {
+//     posts: [],
+//     status: 'idle',
+//     error: null,
+//   },
+//   reducers: {
+//     addPost: (state, action) => {
+//       state.posts.push(action.payload);
+//     },
+//     removePost: (state, action) => {
+//       const index = state.posts.findIndex(post => post.id === action.payload);
+//       if (index !== -1) {
+//         state.posts.splice(index, 1);
+//       }
+//     },
+//     addComment: (state, action) => {
+//       const post = state.posts.find(post => post.id === action.payload.postId);
+//       if (post) {
+//         post.comments.push(action.payload.comment);
+//       }
+//     },
+//   },
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchPosts.pending, (state) => {
+//         state.status = 'loading';
+//       })
+//       .addCase(fetchPosts.fulfilled, (state, action) => {
+//         state.status = 'succeeded';
+//         state.posts = action.payload;
+//       })
+//       .addCase(fetchPosts.rejected, (state, action) => {
+//         state.status = 'failed';
+//         state.error = action.error.message;
+//       });
+//   },
+// });
+
+// export const { addPost, removePost, addComment } = postSlice.actions;
+// export default postSlice.reducer;
+
+
+

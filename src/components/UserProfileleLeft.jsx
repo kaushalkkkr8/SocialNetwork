@@ -1,72 +1,19 @@
-import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../features/userSlice";
-import { useEffect, useState } from "react";
+
+
+
+
 import { Link } from "react-router-dom";
-import { handleError } from "../utilities/utils";
 
 const UserProfileLeft = ({ userDetail }) => {
-  const dispatch = useDispatch();
-  const [logInDetail, setLogInDetail] = useState("");
- 
 
-  const fetchProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.warn("No token found. Please log in.");
-        return;
-      }
-
-      const response = await fetch("https://major-project2-backend.vercel.app/profile", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch profile data.");
-      }
-
-      const result = await response.json();
-
-      if (result.success) {
-        setLogInDetail(result.profile);
-      }
-    } catch (err) {
-      handleError(err);
-    }
-  };
-
-  const { profile,status,error } = useSelector((state) => state.user);
-  const allUser = profile || [];
-  const logInProfileData = allUser.find((userss) => userss._id === logInDetail?._id);
-  const userData = userDetail ? userDetail : logInProfileData;
-
-console.log("apple1");
-
-
-useEffect(() => {
-  console.log("Fetching user data");
-  dispatch(fetchUser());
-}, [logInDetail]);
-
-
-
-useEffect(() => {
-  fetchProfile();
-  }, []);
-  
-
+  const userData = userDetail;
 
   return (
     <>
-          {status === "loading" && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-
       <div className="card sticky-top">
         <div className="card-body ">
           <h5 className="card-title text-center">About</h5>
-          {userData ? (
+          {userData && (
             <div>
               <p>{userData.bio}</p>
 
@@ -116,8 +63,6 @@ useEffect(() => {
                 </b>
               </p>
             </div>
-          ) : (
-            <p>No user data found!</p>
           )}
           <hr />
           <div className="my-2 text-center">
@@ -128,22 +73,14 @@ useEffect(() => {
                   <p>Home</p>
                 </Link>
               </div>
-              <div className="col-md-6">
-                <Link to="/userProfile/bookmark">
-                  <i className="bi bi-bookmark-fill"></i>
-                  <p>Bookmark</p>
-                </Link>
-              </div>
+            
               <div className="col-md-6 ">
-                <Link to="/userProfile">
+                <Link to="/profile">
                   <i className=" bi bi-person-lines-fill"></i>
                   <p>Profile</p>
                 </Link>
               </div>
-              <div className="col-md-6">
-                <i className="bi bi-person-fill"></i>
-                <p>People</p>
-              </div>
+             
             </div>
           </div>
         </div>
@@ -152,3 +89,4 @@ useEffect(() => {
   );
 };
 export default UserProfileLeft;
+

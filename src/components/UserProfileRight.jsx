@@ -1,43 +1,48 @@
+
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addFollow, deleteFollow, fetchUser } from "../features/userSlice";
 import { handleError } from "../utilities/utils";
 import { Link } from "react-router-dom";
-const UserProfileRight = ({ userDetail }) => {
+
+const UserProfileRight =({userDetails})  => {
   const dispatch = useDispatch();
-  const [logInDetail, setLogInDetail] = useState("");
   const avtars = {
     male: "https://i.pinimg.com/736x/2a/86/6f/2a866f7847e6f50c86a1ab8e406f5520.jpg",
     female: "https://gallico.shop/wp-content/plugins/konte-addons/assets/images/person.jpg",
   };
 
-  const { user } = useSelector((state) => state);
-  const data = user?.profile;
-  const userData = !userDetail ? userDetail : data.find((user) => user.logIn === true);
-  const followingUser = userData?.following.map((user) => user.userName);
 
-  const followings = data.filter((user) => followingUser.includes(user.userName));
+  const { profile } = useSelector((state) => state.user);
+  const allUser = profile || [];
+  const logInProfileData = allUser.find((userss) => userss._id === userDetails?._id);
 
-  const followingHandeler = (profileId) => {
-    const profileForFollowing = allUser?.find((user) => user._id === profileId);
 
-    const targetUserId = profileForFollowing?._id;
-
-    const isFollowing = userData?.following?.some((f) => f.user === profileId);
-
-    if (isFollowing) {
-      dispatch(deleteFollow({ id: userData._id, targetUserId }));
-    } else {
-      dispatch(addFollow({ id: userData._id, targetUserId }));
-    }
-  };
   useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch]);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+  const followings = allUser?.filter((user) => logInProfileData?.following?.some((follow) => follow.user === user._id));
+  const followers = allUser?.filter((user) => logInProfileData?.follower?.some((follow) => follow.user === user._id));
+
+  
+  const followingHandeler = (profileId) => {
+
+
+    const profileForFollowing = allUser?.find((user) => user._id === profileId);
+
+    const targetUserId = profileForFollowing?._id;
+
+    const isFollowing = logInProfileData?.following?.some((f) => f.user === profileId);
+
+
+    if (isFollowing) {
+      dispatch(deleteFollow({ id: logInProfileData?._id, targetUserId }));
+    } else {
+      dispatch(addFollow({ id: logInProfileData?._id, targetUserId }));
+    }
+  };
   return (
     <>
       <div className="sticky-top">
@@ -46,7 +51,7 @@ const UserProfileRight = ({ userDetail }) => {
             <h5 className="card-title text-center ">Followings</h5>
 
             {followings?.map((userDetail) => {
-              const isFollowing = userData?.following?.some((user) => user.user === userDetail?._id);
+              const isFollowing = logInProfileData?.following?.some((user) => user.user === userDetail?._id);
               const folloButtonClass = isFollowing ? "bi bi-plus-circle-fill text-primary h3" : "bi bi-plus-circle text-primary h3";
               return (
                 <div className="d-flex mb-3" key={userDetail._id}>
@@ -78,7 +83,7 @@ const UserProfileRight = ({ userDetail }) => {
             <h5 className="card-title text-center ">Followers</h5>
 
             {followers?.map((userDetail) => {
-              const isFollowing = userData?.following?.some((user) => user.user === userDetail?._id);
+              const isFollowing = logInProfileData?.following?.some((user) => user.user === userDetail?._id);
               const folloButtonClass = isFollowing ? "bi bi-plus-circle-fill text-primary h3" : "bi bi-plus-circle text-primary h3";
               return (
                 <div className="d-flex mb-3" key={userDetail._id}>
