@@ -46,12 +46,12 @@ const UserProfileRight = ({ userDetails }) => {
               const folloButtonClass = isFollowing ? "bi bi-plus-circle-fill text-primary h3" : "bi bi-plus-circle text-primary h3";
               return (
                 <div className="d-flex mb-3" key={userDetail._id}>
-                  <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
+                  <div className=" me-2 ">
                     <Link to="/userProfile" state={userDetail}>
                       {userDetail?.image?.length > 0 ? (
-                        <img src={userDetail?.image[userDetail?.image?.length - 1].imageURL} className="img-fluid" alt="..." />
+                        <img src={userDetail?.image[userDetail?.image?.length - 1].imageURL} className="img-fluid"  style={{width:"50px",height:"50px"}}  alt="..." />
                       ) : (
-                        <img src={userDetail?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid" alt="..." />
+                        <img src={userDetail?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid"  style={{width:"50px",height:"50px"}}  alt="..." />
                       )}
                     </Link>
                   </div>
@@ -78,12 +78,12 @@ const UserProfileRight = ({ userDetails }) => {
               const folloButtonClass = isFollowing ? "bi bi-plus-circle-fill text-primary h3" : "bi bi-plus-circle text-primary h3";
               return (
                 <div className="d-flex mb-3" key={userDetail._id}>
-                  <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
+                  <div className=" me-2 " >
                     <Link to="/profile" state={userDetail}>
                       {userDetail?.image?.length > 0 ? (
-                        <img src={userDetail?.image[userDetail?.image?.length - 1].imageURL} className="img-fluid" alt="..." />
+                        <img src={userDetail?.image[userDetail?.image?.length - 1].imageURL} className="img-fluid"  style={{width:"50px",height:"50px"}}  alt="..." />
                       ) : (
-                        <img src={userDetail?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid" alt="..." />
+                        <img src={userDetail?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid"  style={{width:"50px",height:"50px"}}  alt="..." />
                       )}
                     </Link>
                   </div>

@@ -190,12 +190,7 @@ const postSlice = createSlice({
       .addCase(addLikes.pending, (state) => {
         state.status = "loading";
       })
-      // .addCase(addLikes.fulfilled, (state, action) => {
-      //   state.status = "succeeded";
-      //   console.log("action.payload like", action.payload);
-
-      //   state.posts = state.posts.map((post) => (post._id === action.payload._id ? action.payload : post));
-      // })
+      
       .addCase(addLikes.fulfilled, (state, action) => {
         state.status = "succeeded";
         const post = state.posts.find((post) => post._id === action.payload._id);

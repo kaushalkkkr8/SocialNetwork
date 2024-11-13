@@ -86,7 +86,7 @@ console.log("location",location);
           <div className="col-md-3">
             <div className="card sticky-top">
               {userData?.coverImage?.length > 0 ? (
-                <img src={userData?.coverImage[userData?.coverImage?.length - 1].imageURL} className="card-img-top img-fluid" alt="..." style={{ maxHeight: "40px", objectFit: "cover" }} />
+                <img src={userData?.coverImage[userData?.coverImage?.length - 1].imageURL} className="card-img-top img-fluid" alt="..." style={{ height: "40px", objectFit: "cover" }} />
               ) : null}
               <div className="d-flex justify-content-center ">
                 <div className="mt-3" style={{ maxWidth: "90px" }}>

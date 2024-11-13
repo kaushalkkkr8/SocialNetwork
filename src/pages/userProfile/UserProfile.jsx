@@ -99,11 +99,11 @@ const UserProfile = ({ userDetails }) => {
               <div className="card  mb-4 p-4">
                 <div className="container">
                   <div className="d-flex mb-3">
-                    <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
+                    <div className=" me-2 " >
                       {userOfPostData?.image?.length > 0 ? (
-                        <img src={userOfPostData?.image[userOfPostData?.image?.length - 1].imageURL} className="img-fluid rounded" alt="..." />
+                        <img src={userOfPostData?.image[userOfPostData?.image?.length - 1].imageURL} className="img-fluid rounded-circle" style={{width:"50px",height:"50px"}}  alt="..." />
                       ) : (
-                        <img src={userOfPostData?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded" alt="..." />
+                        <img src={userOfPostData?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded-circle" style={{width:"50px",height:"50px"}}  alt="..." />
                       )}
                     </div>
                     {/*======================================== POSTS =========================================  */}
@@ -146,11 +146,11 @@ const UserProfile = ({ userDetails }) => {
                     {/* ============================== POST COMMENTS ========================================== */}
 
                     <div className="d-flex  mb-3">
-                      <div className=" me-2 " style={{ maxWidth: "30px", maxHeight: "30px", position: "relative", display: "inline-block" }}>
+                      <div className=" me-2 " >
                         {userDetails?.image?.length > 0 ? (
-                          <img src={userDetails?.image[userDetails?.image?.length - 1].imageURL} className="img-fluid rounded" alt="..." />
+                          <img src={userDetails?.image[userDetails?.image?.length - 1].imageURL} className="img-fluid rounded-circle" style={{width:"50px",height:"50px"}}  alt="..." />
                         ) : (
-                          <img src={userDetails?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded" alt="..." />
+                          <img src={userDetails?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded-circle" style={{width:"50px",height:"50px"}}  alt="..." />
                         )}
                       </div>
                       <form className="w-100 d-flex">
@@ -174,11 +174,11 @@ const UserProfile = ({ userDetails }) => {
 
                       return (
                         <div className="d-flex  mb-3 " key={comnt._id}>
-                          <div className=" me-2 " style={{ width: "50px", height: "50px", position: "relative", display: "inline-block" }}>
+                          <div className=" me-2 " >
                             {userOfComent?.image?.length > 0 ? (
-                              <img src={userOfComent?.image[userOfComent?.image?.length - 1].imageURL} className="img-fluid rounded" alt="..." />
+                              <img src={userOfComent?.image[userOfComent?.image?.length - 1].imageURL} className="img-fluid rounded-circle" style={{width:"50px",height:"50px"}}  alt="..." />
                             ) : (
-                              <img src={userOfComent?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded" alt="..." />
+                              <img src={userOfComent?.sex === "Male" ? avtars.male : avtars.female} className="img-fluid rounded-circle" style={{width:"50px",height:"50px"}}  alt="..." />
                             )}
                           </div>
                           <div className="w-100 ">
