@@ -77,9 +77,7 @@ const SignUp = () => {
                   <br />
 
                   <div className="input-group mb-3">
-                    {/* <span className="input-group-text" id="basic-addon1">
-                      @
-                    </span> */}
+                  
                     <input type="text" name="userName" className="form-control text-center px-5" placeholder="UserName: @kaushalkr8" value={signupInfo.userName} onChange={handleChange} />
                   </div>
 
@@ -120,10 +118,13 @@ const SignUp = () => {
               <div style={{ maxHeight: "700px" }}>
                 <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
                   <div className="carousel-inner">
-                    <div className="carousel-item active" data-bs-interval="2000">
+                  <div className="carousel-item" data-bs-interval="1500">
+                      <img src="https://sj-company.ru/new_images/po/po-1c-cloud-8.jpg" className="  card-img  img-fluid" style={{ maxHeight: "700px" }} alt="..." />
+                    </div>
+                    <div className="carousel-item active" data-bs-interval="1500">
                       <img src="https://holatelcel.com/wp-content/uploads/2016/05/mujer-ok.jpg" className=" card-img  img-fluid" style={{ maxHeight: "700px" }} alt="..." />
                     </div>
-                    <div className="carousel-item" data-bs-interval="2000">
+                    <div className="carousel-item" data-bs-interval="1500">
                       <img
                         src="https://img.buzzfeed.com/buzzfeed-static/static/2019-09/29/3/asset/e04537f29483/sub-buzz-5428-1569727492-1.jpg?downsize=700%3A%2A&output-quality=auto&output-format=auto"
                         className="card-img  img-fluid"
@@ -131,9 +132,7 @@ const SignUp = () => {
                         alt="..."
                       />
                     </div>
-                    <div className="carousel-item" data-bs-interval="2000">
-                      <img src="https://sj-company.ru/new_images/po/po-1c-cloud-8.jpg" className="  card-img  img-fluid" style={{ maxHeight: "700px" }} alt="..." />
-                    </div>
+                   
                   </div>
                 </div>
               </div>
