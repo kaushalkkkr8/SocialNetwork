@@ -17,7 +17,6 @@ const MainPage = () => {
   const [allProfile, setAllProfile] = useState(false);
   const [editPost, setEditPost] = useState(false);
   const location = useLocation();
-console.log("location",location);
 
   const avtars = {
     male: "https://i.pinimg.com/736x/2a/86/6f/2a866f7847e6f50c86a1ab8e406f5520.jpg",
