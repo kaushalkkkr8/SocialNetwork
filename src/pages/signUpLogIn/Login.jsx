@@ -36,8 +36,19 @@ const Login = () => {
         },
         body: JSON.stringify(logInInfo),
       });
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        handleError(errorResponse.message || "Email or Password is required");
+        return;
+      }
+
+
+
       const result = await response.json();
       const { success, message, token, error } = result;
+
+
       if (success) {
         handleSuccess(message);
         localStorage.setItem("token", token);

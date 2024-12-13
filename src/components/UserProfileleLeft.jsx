@@ -15,7 +15,7 @@ const UserProfileLeft = ({ userDetail }) => {
           <h5 className="card-title text-center">About</h5>
           {userData && (
             <div>
-              <p>{userData.bio}</p>
+              <p>{userData.bio?userData.bio:""}</p>
 
               <p className="text-secondary">
                 {" "}
@@ -27,19 +27,19 @@ const UserProfileLeft = ({ userDetail }) => {
               <p className="text-secondary">
                 {" "}
                 <b>
-                  <i className="bi bi-calendar-date-fill btn btn-success"></i> DOB: {userData.dob}
+                  <i className="bi bi-calendar-date-fill btn btn-success"></i> DOB: {userData.dob?userData.dob:""}
                 </b>
               </p>
               <p className="text-secondary">
                 {" "}
                 <b>
-                  <i className="bi bi-hearts btn btn-danger"></i> Status: {userData.maritialStatus}{" "}
+                  <i className="bi bi-hearts btn btn-danger"></i> Status: { userData.maritialStatus?userData.maritialStatus:""}{" "}
                 </b>
               </p>
               <p className="text-secondary">
                 {" "}
                 <b>
-                  <i className="bi bi-envelope-at-fill btn btn-primary"></i> Email: {userData.email}
+                  <i className="bi bi-envelope-at-fill btn btn-primary"></i> Email: {userData.email?userData.email:""}
                 </b>
               </p>
               <p className="text-secondary">
@@ -49,7 +49,7 @@ const UserProfileLeft = ({ userDetail }) => {
                   
                   "
                   ></i>{" "}
-                  Phone: {userData.phoneNumber}
+                  Phone: {userData.phoneNumber?userData.phoneNumber:""}
                 </b>
               </p>
               <p className="text-secondary">
@@ -59,7 +59,7 @@ const UserProfileLeft = ({ userDetail }) => {
                     <i className="bi bi-gender-male text-primary"></i>
                     <i className="bi bi-gender-female text-danger"></i>
                   </span>
-                  Sex: {userData.sex}
+                  Sex: {userData.sex?userData.sex:""}
                 </b>
               </p>
             </div>
