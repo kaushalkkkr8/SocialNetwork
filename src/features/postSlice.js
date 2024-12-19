@@ -89,7 +89,7 @@ const postSlice = createSlice({
        
       })
      
-      .addCase(fetchPosts.rejected, async (state, action) => {
+      .addCase(fetchPosts.rejected,  (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
@@ -98,22 +98,13 @@ const postSlice = createSlice({
       .addCase(postPost.pending, (state) => {
         state.status = "loading";
       })
-      // .addCase(postPost.fulfilled, (state, action) => {
-      //   state.status = "success";
 
-      //   state.posts = action.payload;
-      // })
-      // .addCase(postPost.fulfilled, (state, action) =>  ({
-      //   ...state,
-      //   status: "success",
-      //   posts: action.payload,
-      // }))
       .addCase(postPost.fulfilled, (state, action) => {
         state.status = "success";
         state.posts = action.payload;
       })
 
-      .addCase(postPost.rejected, async (state, action) => {
+      .addCase(postPost.rejected,  (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
@@ -128,7 +119,7 @@ const postSlice = createSlice({
         state.posts = action.payload;
       })
 
-      .addCase(editPost.rejected, async (state, action) => {
+      .addCase(editPost.rejected,  (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
@@ -143,7 +134,7 @@ const postSlice = createSlice({
         state.posts = state.posts.filter((posts) => posts._id !== action.payload.post._id);
       })
 
-      .addCase(deletePost.rejected, async (state, action) => {
+      .addCase(deletePost.rejected,  (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
@@ -219,61 +210,7 @@ const postSlice = createSlice({
 export default postSlice.reducer;
 
 
-// postSlice.js
-// postSlice.js
-// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// const api = "https://major-project2-backend.vercel.app";
-// export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (token) => {
-//   const response = await fetch(`${api}/posts`, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-//   return response.json();
-// });
 
-// const postSlice = createSlice({
-//   name: 'post',
-//   initialState: {
-//     posts: [],
-//     status: 'idle',
-//     error: null,
-//   },
-//   reducers: {
-//     addPost: (state, action) => {
-//       state.posts.push(action.payload);
-//     },
-//     removePost: (state, action) => {
-//       const index = state.posts.findIndex(post => post.id === action.payload);
-//       if (index !== -1) {
-//         state.posts.splice(index, 1);
-//       }
-//     },
-//     addComment: (state, action) => {
-//       const post = state.posts.find(post => post.id === action.payload.postId);
-//       if (post) {
-//         post.comments.push(action.payload.comment);
-//       }
-//     },
-//   },
-//   extraReducers: (builder) => {
-//     builder
-//       .addCase(fetchPosts.pending, (state) => {
-//         state.status = 'loading';
-//       })
-//       .addCase(fetchPosts.fulfilled, (state, action) => {
-//         state.status = 'succeeded';
-//         state.posts = action.payload;
-//       })
-//       .addCase(fetchPosts.rejected, (state, action) => {
-//         state.status = 'failed';
-//         state.error = action.error.message;
-//       });
-//   },
-// });
-
-// export const { addPost, removePost, addComment } = postSlice.actions;
-// export default postSlice.reducer;
 
 
 

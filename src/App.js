@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
 import Login from "./pages/signUpLogIn/Login";
 import SignUp from "./pages/signUpLogIn/SignUp";
 import MainPage from "./pages/MainPage";
@@ -17,20 +16,19 @@ function App() {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
-      const redirectPaths = ["/logIn", "/signUp", "/login", "/"];
+      const redirectPaths = [ "/signUp",  "/"];
       if (redirectPaths.includes(location.pathname)) {
         navigate("/mainPage", { replace: false });
       }
     }
   }, [location.pathname, navigate]);
 
-  const PrivateRoute = ({ element }) => (isAuthenticated ? element : <Navigate to="/logIn" />);
+  const PrivateRoute = ({ element }) => (isAuthenticated ? element : <Navigate to="/" />);
 
   return (
     <>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/logIn" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile" element={<Bookmark />} />

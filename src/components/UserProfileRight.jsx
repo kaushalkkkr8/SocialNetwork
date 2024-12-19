@@ -2,6 +2,8 @@ import { useEffect,  } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addFollow, deleteFollow, fetchUser } from "../features/userSlice";
 import { Link } from "react-router-dom";
+import { handleSuccess } from "../utilities/utils";
+import { ToastContainer } from "react-toastify";
 
 const UserProfileRight = ({ userDetails }) => {
   const dispatch = useDispatch();
@@ -30,8 +32,10 @@ const UserProfileRight = ({ userDetails }) => {
 
     if (isFollowing) {
       dispatch(deleteFollow({ id: logInProfileData?._id, targetUserId }));
+        handleSuccess("Unfollow Successfully")
     } else {
       dispatch(addFollow({ id: logInProfileData?._id, targetUserId }));
+      handleSuccess("Following Successfully")
     }
   };
   return (
@@ -39,7 +43,7 @@ const UserProfileRight = ({ userDetails }) => {
       <div className="sticky-top">
         <div className="card">
           <div className="card-body">
-            <h5 className="card-title text-center ">Followings</h5>
+            <h5 className="card-title text-center ">Followings ({followings?.length})</h5>
 
             {followings?.map((userDetail) => {
               const isFollowing = logInProfileData?.following?.some((user) => user.user === userDetail?._id);
@@ -71,7 +75,7 @@ const UserProfileRight = ({ userDetails }) => {
         </div>
         <div className="card my-4">
           <div className="card-body">
-            <h5 className="card-title text-center ">Followers</h5>
+            <h5 className="card-title text-center ">Followers ({followers?.length})</h5>
 
             {followers?.map((userDetail) => {
               const isFollowing = logInProfileData?.following?.some((user) => user.user === userDetail?._id);
@@ -101,6 +105,7 @@ const UserProfileRight = ({ userDetails }) => {
             })}
           </div>
         </div>
+        <ToastContainer/>
       </div>
     </>
   );

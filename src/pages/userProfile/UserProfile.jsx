@@ -86,7 +86,7 @@ const UserProfile = ({ userDetails }) => {
     <>
       <div className="container-fluid"></div>
 
-      {Array.isArray(myPosts) &&
+      {Array.isArray(myPosts) && myPosts?.length>0?
         myPosts?.map((post) => {
           const userOfPostData = allUser?.find((users) => post?.user === users?._id);
          const isBookmarked = logInProfileData?.bookmarked?.some((user) => user.post === post._id);
@@ -210,7 +210,14 @@ const UserProfile = ({ userDetails }) => {
               </div>
             </section>
           );
-        })}
+        }):(
+          <div className="card">
+            <div className="card-body text-center">
+            <h5>You haven't posted anything yet.</h5>
+
+            </div>
+          </div>
+        )}
     </>
   );
 };

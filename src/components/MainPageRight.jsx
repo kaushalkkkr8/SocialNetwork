@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { addFollow, deleteFollow } from "../features/userSlice";
 import { useState } from "react";
+import { handleSuccess } from "../utilities/utils";
 
 const MainPageRight = ({userDetails,allUser,onSeeMore }) => {
   const dispatch = useDispatch();
@@ -28,8 +29,10 @@ const MainPageRight = ({userDetails,allUser,onSeeMore }) => {
 
     if (isFollowing) {
       dispatch(deleteFollow({ id: userDetails?._id, targetUserId }));
+      handleSuccess("Unfollow Successfully")
     } else {
       dispatch(addFollow({ id: userDetails?._id, targetUserId }));
+      handleSuccess("Following Successfully")
     }
   };
 
@@ -67,7 +70,7 @@ const MainPageRight = ({userDetails,allUser,onSeeMore }) => {
           })}
             {otherUser?.length > 4 && (
           <div className="text-center mt-3">
-            {/* <Link to="/mainPage"  className="text-decoration-none"> */}
+    
             <Link to="#" onClick={(e) => { e.preventDefault(); onSeeMore(); }} className="text-decoration-none">
               See More
             </Link>

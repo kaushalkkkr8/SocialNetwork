@@ -150,7 +150,7 @@ const MainPage = () => {
           </div>
 
           <div className="col-md-3">
-            {/* <MainPageRight userDetails={userData} allUser={allUser} /> */}
+        
             <MainPageRight userDetails={userData} allUser={allUser} onSeeMore={onSeeMore} />
           </div>
         </div>

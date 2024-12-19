@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { postUser } from "../../features/userSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { handleError, handleSuccess } from "../../utilities/utils";
 import { ToastContainer } from "react-toastify";
 
@@ -61,9 +61,9 @@ const SignUp = () => {
   return (
     <>
       <div className="d-flex  justify-content-center ">
-        <div className="card border-none  w-100">
+        <div className=" w-100">
           <div className="row g-0">
-            <div className="col-md-6">
+            <div className="col-md-6 my-3 ">
               <div className="h-100 d-flex  flex-column align-items-center justify-content-center">
                 <div className="text-center">
                   <h3>Sign Up</h3>
@@ -107,28 +107,28 @@ const SignUp = () => {
                       {" "}
                       Sign Up
                     </button>
-                    <a className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover fw-bold " href="/logIn">
+                    <Link className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover fw-bold " to="/">
                       Log In
-                    </a>
+                    </Link>
                   </div>
                 </form>
               </div>
             </div>
-            <div className="col-md-6">
-              <div style={{ maxHeight: "700px" }}>
+            <div className="col-md-6" style={{ minHeight: "447px" }}>
+              <div >
                 <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
                   <div className="carousel-inner">
                   <div className="carousel-item" data-bs-interval="1500">
-                      <img src="https://sj-company.ru/new_images/po/po-1c-cloud-8.jpg" className="  card-img  img-fluid" style={{ maxHeight: "700px" }} alt="..." />
+                      <img src="https://sj-company.ru/new_images/po/po-1c-cloud-8.jpg" className="  card-img  img-fluid" style={{ minHeight: "500px" }} alt="..." />
                     </div>
                     <div className="carousel-item active" data-bs-interval="1500">
-                      <img src="https://holatelcel.com/wp-content/uploads/2016/05/mujer-ok.jpg" className=" card-img  img-fluid" style={{ maxHeight: "700px" }} alt="..." />
+                      <img src="https://holatelcel.com/wp-content/uploads/2016/05/mujer-ok.jpg" className=" card-img  img-fluid"  style={{ minHeight: "500px" }} alt="..." />
                     </div>
                     <div className="carousel-item" data-bs-interval="1500">
                       <img
                         src="https://img.buzzfeed.com/buzzfeed-static/static/2019-09/29/3/asset/e04537f29483/sub-buzz-5428-1569727492-1.jpg?downsize=700%3A%2A&output-quality=auto&output-format=auto"
                         className="card-img  img-fluid"
-                        style={{ maxHeight: "700px" }}
+                        style={{ minHeight: "500px" }}
                         alt="..."
                       />
                     </div>

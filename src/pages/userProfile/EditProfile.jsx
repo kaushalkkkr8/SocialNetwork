@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { editProfile } from "../../features/userSlice";
 import { useEffect, useState } from "react";
+import { handleSuccess } from "../../utilities/utils";
 
 const EditProfile = ({ userDetails }) => {
   const dispatch = useDispatch();
@@ -62,6 +63,7 @@ const EditProfile = ({ userDetails }) => {
     if (coverImage) formData.append("coverImage", coverImage);
 
     dispatch(editProfile({ id: userDetails._id, updateProfile: formData }));
+    handleSuccess("Profile Updated Successfully")
   };
 
   return (

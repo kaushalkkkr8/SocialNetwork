@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { addFollow, deleteFollow } from "../features/userSlice";
 import { Link } from "react-router-dom";
+import { handleSuccess } from "../utilities/utils";
 
 const AllUser = ({ allUser, userDetails }) => {
   const dispatch = useDispatch();
@@ -25,8 +26,10 @@ const AllUser = ({ allUser, userDetails }) => {
 
     if (isFollowing) {
       dispatch(deleteFollow({ id: userDetails?._id, targetUserId }));
+       handleSuccess("Unfollow Successfully")
     } else {
       dispatch(addFollow({ id: userDetails?._id, targetUserId }));
+       handleSuccess("Following Successfully")
     }
   };
 
@@ -34,7 +37,7 @@ const AllUser = ({ allUser, userDetails }) => {
     <div className="row">
       {otherUser?.map((userDetail) =>  {
          const isFollowing = userDetails?.following?.some((user) => user.user === userDetail?._id);
-         const folloButtonClass = isFollowing ? "btn btn-primary" : "btn btn-outline-primary";
+         const folloButtonClass = isFollowing ? "btn btn-primary rounded-0" : "btn rounded-0 btn-outline-primary";
          const followButtonText = isFollowing ? "Unfollow" : "Follow";
 
         return(

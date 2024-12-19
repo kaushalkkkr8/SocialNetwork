@@ -90,7 +90,8 @@ const Bookmark = ({ userDetails }) => {
 
   return (
     <>
-      {myBookmark?.map((post) => {
+      {myBookmark.length>0?
+      myBookmark?.map((post) => {
         const userOfPostData = allUser?.find((users) => post?.user === users?._id);
 
         const isBookmarked = userDetails?.bookmarked?.some((user) => user.post === post._id);
@@ -216,7 +217,13 @@ const Bookmark = ({ userDetails }) => {
             </div>
           </section>
         );
-      })}
+      }):(
+        <div className="card">
+          <div className="card-body text-center">
+          <h5>You didn't bookmarked a post  yet.</h5>
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -29,11 +29,18 @@ const Photos = ({ userDetails }) => {
             <h5 className="card-title text-center">Photos</h5>
             <div className="container">
               <div className="row px-4 py-2">
-                {photos?.map((pic,index) => (
+                {photos.length>0?
+                photos?.map((pic,index) => (
                   <div className="col-md-4 px-1 mb-2" key={index}>
                     <img src={pic} className="card-img img-fluid " alt="" style={{ width: "100%", height: "100%", objectFit: "cover", aspectRatio: "1 / 1" }} />
                   </div>
-                ))}
+                )):(
+                  <div className="card">
+                    <div className="card-body text-center">
+                    <h5>You haven't posted anything yet.</h5>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

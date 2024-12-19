@@ -18,11 +18,9 @@ const Profile = () => {
   const [showMyPhoto, setShowMyPhoto] = useState(false);
   const [showMyBookmark, setShowMyBookmark] = useState(false);
   const [showEditProfile, setShowMyEditProfile] = useState(false);
- 
+
   const location = useLocation();
   const userDetail = location.state;
-
-
 
   const avtars = {
     male: "https://i.pinimg.com/736x/2a/86/6f/2a866f7847e6f50c86a1ab8e406f5520.jpg",
@@ -56,8 +54,7 @@ const Profile = () => {
   const { profile, status, error } = useSelector((state) => state.user);
   const allUser = profile || [];
   const logInProfileData = allUser.find((userss) => userss._id === logInDetail?._id);
-   const userData = userDetail ? userDetail:logInProfileData;
-  
+  const userData = userDetail ? userDetail : logInProfileData;
 
   useEffect(() => {
     fetchProfile();
@@ -122,14 +119,17 @@ const Profile = () => {
               <div className="container">
                 <div>
                   <ul className="nav nav-underline ">
-                    <li className="nav-item col">
-                      <i className="bi bi-briefcase-fill text-warning-emphasis"></i>
-                      <p className="d-inline">{userData.profession}</p>
+                    <li className="nav-item col mt-2">
+                      <span className="text-decoration-none">
+                        <i className="bi bi-briefcase-fill text-warning-emphasis"></i> {userData.profession}
+                      </span>
                     </li>
 
-                    <li className="nav-item col">
-                      <i className="bi bi-geo-alt-fill text-primary-emphasis"></i>
-                      {userData.country}
+                    <li className="nav-item col mt-2">
+                      <span className=" " style={{ textDecoration: "none" }} disabled>
+                        <i className="bi bi-geo-alt-fill text-primary-emphasis"></i>
+                        {userData.country}
+                      </span>
                     </li>
 
                     <li className="nav-item col">
@@ -144,15 +144,15 @@ const Profile = () => {
                     </li>
 
                     <li className="nav-item col">
-                    {logInProfileData?._id===userData?._id ? (
-                      <Link className="nav-link" onClick={handleMyBookmarkClick} state={userData} style={{ textDecoration: "none" }}>
-                        <i className="bi bi-bookmark-fill text-danger-emphasis"></i> Bookmark
-                      </Link>
-                       ) : null}
+                      {logInProfileData?._id === userData?._id ? (
+                        <Link className="nav-link" onClick={handleMyBookmarkClick} state={userData} style={{ textDecoration: "none" }}>
+                          <i className="bi bi-bookmark-fill text-danger-emphasis"></i> Bookmark
+                        </Link>
+                      ) : null}
                     </li>
 
                     <li className="nav-item col">
-                      {logInProfileData?._id===userData?._id ? (
+                      {logInProfileData?._id === userData?._id ? (
                         <Link onClick={handleMyEditProfileClick} className="nav-link">
                           <i className="bi bi-pencil-fill"></i> Edit Profile
                         </Link>
@@ -180,11 +180,11 @@ const Profile = () => {
             <div className="col-md-6">
               {showMyPosts && <UserProfile userDetails={userData} />}
               {showMyPhoto && <Photos userDetails={userData} />}
-              {showMyBookmark && <Bookmark userDetails={userData}  />}
+              {showMyBookmark && <Bookmark userDetails={userData} />}
               {showEditProfile && <EditProfile userDetails={userData} />}
             </div>
             <div className="col-md-3">
-              <UserProfileRight userDetails={userData} allUser={allUser}/>
+              <UserProfileRight userDetails={userData} allUser={allUser} />
             </div>
           </div>
         </div>

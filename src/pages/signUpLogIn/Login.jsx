@@ -43,11 +43,8 @@ const Login = () => {
         return;
       }
 
-
-
       const result = await response.json();
       const { success, message, token, error } = result;
-
 
       if (success) {
         handleSuccess(message);
@@ -61,7 +58,6 @@ const Login = () => {
       } else if (!success) {
         handleError(message);
       }
-     
     } catch (err) {
       handleError(err);
     }
@@ -69,11 +65,11 @@ const Login = () => {
 
   return (
     <>
-      <div className="d-flex  justify-content-center ">
-        <div className="card border-none  w-100">
+      <div className="d-flex  justify-content-center " style={{ minHeight: "100vh" }}>
+        <div className=" w-100">
           <div className="row g-0">
-            <div className="col-md-6">
-              <div className="h-100 d-flex  flex-column align-items-center justify-content-center">
+            <div className="col-md-6 my-2 " >
+              <div className="h-100 d-flex  flex-column align-items-center justify-content-center ">
                 <div className="text-center">
                   <h3>Welcome</h3>
                   <p>
@@ -83,14 +79,14 @@ const Login = () => {
                 </div>
                 <form onSubmit={handleLogin}>
                   <div className="d-flex position-relative">
-                    <i className="position-absolute  bi bi-person-square h2 text-secondary" style={{ top: "-1px", left: "3px" }}></i>
-                    <input type="email" className="form-control text-center px-5" placeholder="Enter your email... " name="email" value={logInInfo.email} onChange={handleChange} />
+                    <i className="position-absolute  bi bi-person-square h3 text-secondary" style={{ top:"-1px",left: "3px" }}></i>
+                    <input type="email" className="form-control form-control-sm text-center px-5" placeholder="Enter your email... " name="email" value={logInInfo.email} onChange={handleChange} />
                   </div>
 
                   <br />
                   <div className="d-flex position-relative">
-                    <i className="position-absolute  bi bi-shield-lock-fill h2 text-secondary " style={{ top: "-1px", left: "3px" }}></i>
-                    <input type="password" name="password" className="form-control px-5 text-center " placeholder="Password" value={logInInfo.password} onChange={handleChange} />
+                    <i className="position-absolute  bi bi-shield-lock-fill h3 text-secondary " style={{ top:"-1px", left: "3px" }}></i>
+                    <input type="password" name="password" className="form-control form-control-sm px-5 text-center " placeholder="Password" value={logInInfo.password} onChange={handleChange} />
                   </div>
                   <a className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="/">
                     Forgot Password?
@@ -110,26 +106,7 @@ const Login = () => {
               </div>
             </div>
             <div className="col-md-6">
-              <div style={{ maxHeight: "700px" }}>
-                <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
-                  <div className="carousel-inner">
-{/*                       <div className="carousel-item active" data-bs-interval="2000">
-                      <img src="https://holatelcel.com/wp-content/uploads/2016/05/mujer-ok.jpg" className=" card-img  img-fluid" style={{ maxHeight: "700px" }} alt="..." />
-                    </div> */}
-                    <div className="carousel-item active" data-bs-interval="2000">
-                      <img
-                        src="https://img.buzzfeed.com/buzzfeed-static/static/2019-09/29/3/asset/e04537f29483/sub-buzz-5428-1569727492-1.jpg?downsize=700%3A%2A&output-quality=auto&output-format=auto"
-                        className="card-img d-block img-fluid"
-                        style={{ maxHeight: "700px" }}
-                        alt="..."
-                      />
-                    </div>
-                    <div className="carousel-item" data-bs-interval="2000">
-                      <img src="https://sj-company.ru/new_images/po/po-1c-cloud-8.jpg" className="d-block card-img  img-fluid" style={{ maxHeight: "700px" }} alt="..." />
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <img src="https://sj-company.ru/new_images/po/po-1c-cloud-8.jpg" className="img-fluid " style={{ minHeight: "447px" }} alt="..."/>
             </div>
           </div>
         </div>

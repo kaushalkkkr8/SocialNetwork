@@ -10,9 +10,9 @@ const Navbar = () => {
   const handleLogout = (e) => {
     localStorage.removeItem("token");
 
-    handleSuccess("User Loggedout");
+    handleSuccess("User Logged out");
     setTimeout(() => {
-      navigate("/logIn");
+      navigate("/");
     }, 1000);
   };
 
