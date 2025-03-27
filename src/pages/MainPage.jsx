@@ -98,9 +98,9 @@ const MainPage = () => {
               </div>
               <div className="card-body text-center">
                 <h5 className="card-title">{userData?.name}</h5>
-                <Link to="/userProfile" className="card-text" style={{ textDecoration: "none" }}>
+{/*                 <Link to="/userProfile" className="card-text" style={{ textDecoration: "none" }}>
                   {userData?.userName}
-                </Link>
+                </Link> */}
                 <p className="card-text">{userData?.profession}</p>
 
                 <div className="d-flex">
