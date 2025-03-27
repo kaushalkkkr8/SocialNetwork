@@ -88,9 +88,9 @@ const Login = () => {
                     <i className="position-absolute  bi bi-shield-lock-fill h3 text-secondary " style={{ top:"-1px", left: "3px" }}></i>
                     <input type="password" name="password" className="form-control form-control-sm px-5 text-center " placeholder="Password" value={logInInfo.password} onChange={handleChange} />
                   </div>
-                  <a className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="/">
+{/*                   <a className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="/">
                     Forgot Password?
-                  </a>
+                  </a> */}
 
                   <br />
                   <br />
